@@ -1,0 +1,25 @@
+{
+  "name": "cpluspatch-bot",
+  "version": "1.0.0",
+  "description": "A simple bot for myself and my servers. Sends memes.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CPlusPatch/cpluspatch-bot.git"
+  },
+  "author": "CPlusPatch#9373",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CPlusPatch/cpluspatch-bot/issues"
+  },
+  "homepage": "https://github.com/CPlusPatch/cpluspatch-bot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.11.0",
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.5.1"
+  }
+}
