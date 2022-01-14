@@ -1,33 +1,18 @@
 const getMeme = require("meme-fetcher").default;
-async function getRandomFromSubreddits(subreddits, title, channel) {
-	const random = subreddits[Math.floor(Math.random() * subreddits.length)];
 
-	var img = await randomPuppy(random);
-	// Check if the img is an mp4, retry if it is one (we want a GIF or an image, not a video)
-	while (img.includes(".mp4")) {
-		img = await randomPuppy(random);
-	}
+module.exports.default = async (type) => {
+	return new Promise(async (resolve, reject) => {
+		var image = undefined;
 
-	const embed = new MessageEmbed()
-		.setColor("RANDOM")
-		.setImage(img)
-		.setTitle(title)
-		.setURL(`https://reddit.com/r/${random}`)
-	channel.send({embeds: [embed]});
+		while (typeof image == "undefined" || typeof image.title != "string") {
+			try {
+				image = await getMeme({ type: type });
+			}
+			catch {
+				continue;
+			}
+		}
+
+		resolve(image);
+	});
 }
-
-function getRandomFromSubreddit(subreddit) {
-	/* return new Promise((resolve, reject) => {
-		get(subreddit)
-			.then((image) => {
-				resolve(image);
-			})
-			.catch(() => {
-				reject("Could not get image from reddit");
-			});
-	}); */
-	
-}
-
-module.exports.getRandomFromSubreddit = getRandomFromSubreddit;
-module.exports.getRandomFromSubreddits = getRandomFromSubreddits;

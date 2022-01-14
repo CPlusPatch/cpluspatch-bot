@@ -22,16 +22,31 @@
 // Base libraries
 const { Client, Intents, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const getMeme = require("meme-fetcher").default;
-const triggers = require("./assets/triggers.json")
-const { getRandomFromSubreddits, getRandomFromSubreddit } = require("./commands/reddit.js");
+const chatTrigger = require("./commands/chatTrigger").default;
+const reactToMentions = require("./commands/reactToMentions").default;
+const getRandomFromSubreddit = require("./commands/reddit").default;
+const cpluspatch_bot = require("./bot.js").default;
 
 // Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 client.once("ready", () => {
-	console.log("[+] CPlusPatch is online! ＼(￣▽￣)／");
+	console.log(String.raw`
+	 ______     ______   __         __  __     ______     ______   ______     ______   ______     __  __    
+	/\  ___\   /\  == \ /\ \       /\ \/\ \   /\  ___\   /\  == \ /\  __ \   /\__  _\ /\  ___\   /\ \_\ \   
+	\ \ \____  \ \  _-/ \ \ \____  \ \ \_\ \  \ \___  \  \ \  _-/ \ \  __ \  \/_/\ \/ \ \ \____  \ \  __ \  
+	 \ \_____\  \ \_\    \ \_____\  \ \_____\  \/\_____\  \ \_\    \ \_\ \_\    \ \_\  \ \_____\  \ \_\ \_\ 
+	  \/_____/   \/_/     \/_____/   \/_____/   \/_____/   \/_/     \/_/\/_/     \/_/   \/_____/   \/_/\/_/ 
+																											
+	 ______     ______   __  __     _____     __     ______     ______                                      
+	/\  ___\   /\__  _\ /\ \/\ \   /\  __-.  /\ \   /\  __ \   /\  ___\                                     
+	\ \___  \  \/_/\ \/ \ \ \_\ \  \ \ \/\ \ \ \ \  \ \ \/\ \  \ \___  \                                    
+	 \/\_____\    \ \_\  \ \_____\  \ \____-  \ \_\  \ \_____\  \/\_____\                                   
+	  \/_____/     \/_/   \/_____/   \/____/   \/_/   \/_____/   \/_____/                                   
+	`);
+	console.log("\n[+] CPlusPatch is online! ＼(￣▽￣)／");
 	client.user.setActivity("cpluspatch.com", {type: "WATCHING"});
+	console.log("[+] Set activity to \"watching cpluspatch.com\"");
 });
 
 client.on('messageCreate', async (message) => {
@@ -42,97 +57,38 @@ client.on('messageCreate', async (message) => {
 	// We don't want to respond to ourselves do we?
 	if (message.author.bot) return;
 
-	// Automatically responds to messages if keywords match
-	for (var trigger in triggers) {
-		if (msg.toLowerCase().includes(trigger.toLowerCase())) {
-			// Adds a chance for the bot to respond to messages
-			if (Math.random() > triggerChance) return;
-			// We begin typing to add a more realistic bot
-			message.channel.sendTyping();
-			// Waits 2s
-			await new Promise(r => setTimeout(r, 2000));
-
-			if (typeof triggers[trigger] == "string") {
-				message.reply(triggers[trigger]);
-				return;
-			}
-			if (Array.isArray(triggers[trigger])) {
-				// Returns random string from array
-				var selectedReply = triggers[trigger][Math.floor(Math.random()*triggers[trigger].length)];
-				message.reply(selectedReply);
-				return;
-			}
-		}
-	}
+	chatTrigger(message, triggerChance);
 
 	if (message.mentions.has(client.user)) {
-		var replies = [
-			"Ayo, I'm CPlusPatch's twin, how you doing?",
-			"Hey, what's up",
-			"If you want to have some gay jokes then here I am",
-			"***WHOMST HATH SUMMONED THE GREAT ONE***",
-			`Good day to you!`,
-			`Howdy!`,
-			`How are you doing?`,
-			`It's always a pleasure to see you!`,
-		];
-
-		message.channel.sendTyping();
-		await new Promise(r => setTimeout(r, 1000));
-
-		message.reply(replies[Math.floor(Math.random()*replies.length)]);
+		reactToMentions(message)
 	}
 
 	if (msg.toLowerCase().includes("meme")) {
 		message.channel.sendTyping();
-		var meme = undefined;
-
-		while (typeof meme == "undefined" || typeof meme.title != "string") {
-			try {
-				meme = await getMeme({ type: "meme" });
-			}
-			catch {
-				continue;
-			}
-			if (cringe.url.includes("v.redd.it") || cringe.url.includes("youtu") || cringe.url.includes("streamable")) {
-				cringe = undefined;
-				continue;
-			}
-		}
-
-		const embed = new MessageEmbed()
-			.setColor("RANDOM")
-			.setImage(meme.url)
-			.setTitle(meme.title)
-			.setURL(`https://reddit.com/r/${meme.subreddit}`)
 		
-		message.channel.send({embeds: [embed]});
+		getRandomFromSubreddit("meme").then((meme) => {
+			const embed = new MessageEmbed()
+				.setColor("RANDOM")
+				.setImage(meme.url)
+				.setTitle(meme.title)
+				.setURL(`https://reddit.com/r/${meme.subreddit}`)
+			
+			message.channel.send({embeds: [embed]});
+		});
 	}
 
 	if (msg.toLowerCase().includes("cringe")) {
 		message.channel.sendTyping();
-		var cringe = undefined;
-
-		while (typeof cringe == "undefined") {
-			try {
-				cringe = await getMeme({ type: "cringe" });
-			}
-			catch {
-				continue;
-			}
-			if (cringe.url.includes("v.redd.it") || cringe.url.includes("youtu") || cringe.url.includes("streamable")) {
-				cringe = undefined;
-				continue;
-			}
-		}
-
-		const embed = new MessageEmbed()
-			.setColor("RANDOM")
-			.setImage(cringe.url)
-			.setTitle(cringe.title)
-			.setURL(`https://reddit.com/r/${cringe.subreddit}`)
 		
-		message.channel.send({embeds: [embed]});
+		getRandomFromSubreddit("cringe").then((cringe) => {
+			const embed = new MessageEmbed()
+				.setColor("RANDOM")
+				.setImage(cringe.url)
+				.setTitle(cringe.title)
+				.setURL(`https://reddit.com/r/${cringe.subreddit}`)
+			
+			message.channel.send({embeds: [embed]});
+		});
 	}
  });
 
