@@ -1,31 +1,38 @@
+/* 
+
+ ______     ______   __         __  __     ______     ______   ______     ______   ______     __  __    
+/\  ___\   /\  == \ /\ \       /\ \/\ \   /\  ___\   /\  == \ /\  __ \   /\__  _\ /\  ___\   /\ \_\ \   
+\ \ \____  \ \  _-/ \ \ \____  \ \ \_\ \  \ \___  \  \ \  _-/ \ \  __ \  \/_/\ \/ \ \ \____  \ \  __ \  
+ \ \_____\  \ \_\    \ \_____\  \ \_____\  \/\_____\  \ \_\    \ \_\ \_\    \ \_\  \ \_____\  \ \_\ \_\ 
+  \/_____/   \/_/     \/_____/   \/_____/   \/_____/   \/_/     \/_/\/_/     \/_/   \/_____/   \/_/\/_/ 
+                                                                                                        
+ ______     ______   __  __     _____     __     ______     ______                                      
+/\  ___\   /\__  _\ /\ \/\ \   /\  __-.  /\ \   /\  __ \   /\  ___\                                     
+\ \___  \  \/_/\ \/ \ \ \_\ \  \ \ \/\ \ \ \ \  \ \ \/\ \  \ \___  \                                    
+ \/\_____\    \ \_\  \ \_____\  \ \____-  \ \_\  \ \_____\  \/\_____\                                   
+  \/_____/     \/_/   \/_____/   \/____/   \/_/   \/_____/   \/_____/                                   
+
+	@ Deez-nutting people since 2016
+	@ Bot coded by @CPlusPatch
+	@ License: MIT License
+	@ Feel free to fork this
+	@ Contact me at contact@cpluspatch.com or by Discord: CPlusPatch#9373
+*/
+
+// Base libraries
 const { Client, Intents, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const { meme } = require('memejs');
+const getMeme = require("meme-fetcher").default;
 const triggers = require("./assets/triggers.json")
+const { getRandomFromSubreddits, getRandomFromSubreddit } = require("./commands/reddit.js");
 
+// Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 client.once("ready", () => {
-	console.log("CPlusPatch is online!");
+	console.log("[+] CPlusPatch is online! ＼(￣▽￣)／");
 	client.user.setActivity("cpluspatch.com", {type: "WATCHING"});
 });
-
-async function getRandomFromSubreddits(subreddits, title, channel) {
-	const random = subreddits[Math.floor(Math.random() * subreddits.length)];
-
-	var img = await randomPuppy(random);
-	// Check if the img is an mp4, retry if it is one (we want a GIF or an image, not a video)
-	while (img.includes(".mp4")) {
-		img = await randomPuppy(random);
-	}
-
-	const embed = new MessageEmbed()
-		.setColor("RANDOM")
-		.setImage(img)
-		.setTitle(title)
-		.setURL(`https://reddit.com/r/${random}`)
-	channel.send({embeds: [embed]});
-}
 
 client.on('messageCreate', async (message) => {
 	var msg = message.content;
@@ -78,57 +85,109 @@ client.on('messageCreate', async (message) => {
 
 	if (msg.toLowerCase().includes("meme")) {
 		message.channel.sendTyping();
-		var retryCount = 0;
-		const getMemes = async () => {
-			meme()
-				.then((meme) => {
-					const embed = new MessageEmbed()
-						.setColor("RANDOM")
-						.setImage(meme.url)
-						.setTitle(meme.title)
-						.setURL(`https://reddit.com/r/${meme.subreddit}`)
-					
-					message.channel.send({embeds: [embed]});
-				})
-				.catch(() => {
-					if (retryCount < 5) {
-						retryCount++
-						getMemes()
-					}
-					else {
-						message.channel.send("Try that again for me honey I'm having trouble getting your dank");
-					}
-				});
+		var meme = undefined;
+
+		while (typeof meme == "undefined" || typeof meme.title != "string") {
+			try {
+				meme = await getMeme({ type: "meme" });
+			}
+			catch {
+				continue;
+			}
+			if (cringe.url.includes("v.redd.it") || cringe.url.includes("youtu") || cringe.url.includes("streamable")) {
+				cringe = undefined;
+				continue;
+			}
 		}
-		getMemes();
+
+		const embed = new MessageEmbed()
+			.setColor("RANDOM")
+			.setImage(meme.url)
+			.setTitle(meme.title)
+			.setURL(`https://reddit.com/r/${meme.subreddit}`)
+		
+		message.channel.send({embeds: [embed]});
 	}
 
 	if (msg.toLowerCase().includes("cringe")) {
 		message.channel.sendTyping();
-		var retryCount = 0;
-		const getCringe = async () => {
-			meme("Cringetopia")
-				.then((meme) => {
-					const embed = new MessageEmbed()
-						.setColor("RANDOM")
-						.setImage(meme.url)
-						.setTitle(meme.title)
-						.setURL(`https://reddit.com/r/${meme.subreddit}`)
-					
-					message.channel.send({embeds: [embed]});
-				})
-				.catch(() => {
-					if (retryCount < 5) {
-						retryCount++
-						getCringe()
-					}
-					else {
-						message.channel.send("Try that again for me honey I'm having trouble getting your cringe");
-					}
-				});
+		var cringe = undefined;
+
+		while (typeof cringe == "undefined") {
+			try {
+				cringe = await getMeme({ type: "cringe" });
+			}
+			catch {
+				continue;
+			}
+			if (cringe.url.includes("v.redd.it") || cringe.url.includes("youtu") || cringe.url.includes("streamable")) {
+				cringe = undefined;
+				continue;
+			}
 		}
-		getCringe();
+
+		const embed = new MessageEmbed()
+			.setColor("RANDOM")
+			.setImage(cringe.url)
+			.setTitle(cringe.title)
+			.setURL(`https://reddit.com/r/${cringe.subreddit}`)
+		
+		message.channel.send({embeds: [embed]});
 	}
  });
-// Last line
+
+// Last line: login to the client
 client.login(config.token);
+
+/*
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWMMMMMWXKK00KKNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWWMMMWNNWWXNKxxxkkkkxdddxO0000KXNWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWXkdOXWXxc;:cccccccclccclc:::lodxxOKNWMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWkc;,,:lc:,..........,cc:ccccccllollloxk0XWMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNx,,,'.................,cccccclllllllodxxxkkOXWMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMO,,:'.................''':llllllllllllloodO0OkOXWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0::l:'...............'::.':lllllllllloolllldO00k0NMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWO:,;'.....................'clllllllllooollllox0KO0WMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMXd:;coc::,',;c:;;:cc:;',,'...,cllllllllllllllllldO0k0WMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNo,,lKNXXNXK0KXNNNNNNNKOxdc;,,',cllllllllllllllllloOOONMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMNd'.,kNNNNNNNNNNNNNNNNNNNNXKxc;,';lclllllllllllllolloxk0WMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMWk'..;ONNNNNNNNNNNNNNNNNNNNNNKOdl,':cllllllllllllllolloxkKMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMK:..'xKKKXNNNNNNNNNNNNNNNNNNNXK0xc,,ccllllllllllllllllldxkNMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..;do:;ckNNNNNNNNNNNNNNNNNNNXXKko;;ccllllllllllllllllokx0MMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMNl...c0K0k:,dXNNNNNNNNNNNNNNNNNNXXK0o;:cllllllllllllllllokxkNMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMO;...lKKKK0xldXNNNNNNNNNNNNNNNNNXXXXOc;ccllllllllllllllllxkd0MMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMNo....lOxoodxxoONNNXKKKXXNNNNNNNNNXXXKd;::cllllllllllllllloOdkWMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMM0;....',;cllcloxXNNXKOdl:::ccccccldOKXOc;:cllllllllllllllllkxxXMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMk'.....lxkOkkxdd0NNNXKOo;;,,,;ldxOKXXXKd;:ccllllllllllllllldkd0MMMMMMMMMMM
+MMMMMWWNNXXK0KNMMMMMMMMMMWo.....,OOxKOkK0x0NNNXKxoodoclc;;lOKXXXKk:;::cllllllllllllllokdOMMMMMMMMMMM
+MMNxc:::::;;,;OMMMMMMMMMMXc.....'xXxk0xkOx0NNNNW0xk0KkONXx:'ckXXX0l,::clllllllllllllllxxOWMMMMMMMMMM
+lkXd''..::.,;:kWMMMMMMMMM0:.....'dX0xxdooOKNNNNWXkox0OkKWMNx,'cx0Kx;;::clllllllllllcccdkOWMMMMMMMMMM
+'.,oxkl.,;'xKXWMMMMMMMMMMO,.....:kkOKKKOkKXNNNNNNKOxxOx0MWMWXkk0KK0c';::clllllccccc:ccoxkNMMMMMMMMMM
+',..kMk.,,;KMMMMMMMMMMMMM0;.....dK00OKNNXNNNNNNNNNNX0OOXMMMWKk0KKK0Ol;:::cllcc::;;;::clloKMMMMMMMMMM
+;.;.cNx.,,;KMMMMMMMMMMMMMXc.....cXNNNXXNNNNNNNNNNNNNNWWWWNX0OOKKKK0kkl;:::cllcc:::::looolOMMMMMMMMMM
+'.,.oWx.,,;KMMMMMMMMMMMMMWk,.....cKNNNNNNK0KXNNNNNNNNNNNNXKKXXXXKOdxx:';c::cccccoxkkkOOOdOMMMMMMMMMM
+''.cXMx.,,;KMMMMMMMMMMMMMMXo,,'...:xKNNNKxoddx0NNNNNNNNNNNNNXNXOxolc,..':;;;::;:ccoooodockMMMMMMMMMM
+,:xNMMO;lloXMMMMMMMMMMMMMMMNx:;;,,'';lx0NNK0OO0XNNNNNNNNNNNKOxxol:'.....,;;;;;;;;;;::cdclKMMMMMMMMMM
+KWMMMMWWWWWMMMMMMMMMMMMMMMMMW0o;;:c:;,',coxk0KKXXXXXXKK0Oxxddxdc,.....,'';;;;;;;;;;;:olc0MMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMWMWWWKxl;;;;;,''',;:ccclloxkkkkkO0kl:,'...',,.';;;;;;;;,,,codKMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMWN0xdl:,..........'',;;:codxkO0Oo;,'''',,,'..,;,,,'.,cdxOKNWWMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMNOo;'......................'''',:;,;;''''''..'........':kNMMMMWMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMXd,...............................'cdc;'''''''.......'''..,xXMMMMMMMMMMMMMMW
+MMMMMMMMMMMMMMMMMMMMMMMMXl''.......'.'.....'...'...........cx:::..''.'''''...''.....:kNWWMMMMMMMMWWW
+MMMMMMMMMMMMMMMMMMMMMMMMXc''.....''..........'....'.........;;,;,'.'...'''''..;lxl...'cxKWMMMMMMMWXX
+MMMMMMMMMMMMMMMMMMMMMMMMK:',,,..'''''..........'.............'cddc'...''.''..':x0k,...',cx0WMMMMMMWK
+MMMMMMMMMMMMMMMMMMMMMMMMO:,,,,..'''.................'.''...'..'lOOd,.'''.......'cd;....',:cdKWMMMMMW
+MMMMMMMMMMMMMMMMMMMMMMMM0:,,,'..''............. ....,clll:;,....:c:;.''''....'.'okc... ..';::kWMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMNl',,'..'''......... ....''.;OXOolc,.......''..''..'....':,... ...';;:OMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMWXc.','..'''....... ..........;O0dl:'....................':;... .....,,lKWMMM
+MMMMMMMMMMMMMMMMMMMMMMM0:...,'..'''....  .............cKKxo,................................',loOWMM
+MMMMMMMMMMMMMMMMMMMMMMWo',,'.'..'''... ...............'dKx:'...............................'';olkWMM
+MMMMMMMMMMMMMMMMMMMMMMXc','..,'...... ...............'.;xxc................................',;cdXMMM
+MMMMMMMMMMMMMMMMMMMMMMKc';..',,,...'.................''.''........................'..''..:dloxONMMMM
+MMMMMMMMMMMMMMMMMMMMMMNl',..,,,''....................'......................'.....'..,;,.oWWWMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMWo',..,,'.............................''..............''..'....,::.cNMMMMMMMMM
+*/
