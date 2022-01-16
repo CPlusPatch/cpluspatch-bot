@@ -25,6 +25,10 @@
     "meme-fetcher": "^1.0.2",
     "memejs": "^2.0.1",
     "ms": "^2.1.3",
-    "random-puppy": "^1.1.0"
+    "random-puppy": "^1.1.0",
+    "simplest.db": "^1.0.1-2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

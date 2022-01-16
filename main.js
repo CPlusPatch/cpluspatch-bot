@@ -20,13 +20,21 @@
 */
 
 // Base libraries
-const { Client, Intents, MessageEmbed, Constants } = require("discord.js");
+const { Client, Intents, MessageEmbed, Permissions } = require("discord.js");
+const Database = require('simplest.db');
 const config = require("./config.json");
 const chatTrigger = require("./commands/chatTrigger").default;
 const reactToMentions = require("./commands/reactToMentions").default;
 const getRandomFromSubreddit = require("./commands/reddit").default;
 const ms = require("ms");
-const mute = require("./commands/mute").default;
+const mute = require("./commands/mute");
+const unmute = require("./commands/unmute");
+const ping = require("./commands/ping");
+
+// Spawn new database
+const db = new Database({
+    path: './data.json'
+})
 
 // Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
@@ -57,34 +65,9 @@ client.once("ready", () => {
 		commands = client.application.commands;
 	}
 
-	commands.create({
-		name: "ping",
-		description: "Replies with pong",
-	});
-	commands.create({
-		name: "mute",
-		description: "Mutes a user",
-		options: [
-			{
-				name: "user",
-				description: "The user to mute",
-				required: true,
-				type: Constants.ApplicationCommandOptionTypes.USER
-			},
-			{
-				name: "length",
-				description: "Length of mute",
-				required: false,
-				type: Constants.ApplicationCommandOptionTypes.STRING
-			},
-			{
-				name: "reason",
-				description: "Reason for mute",
-				required: false,
-				type: Constants.ApplicationCommandOptionTypes.STRING
-			}
-		]
-	});
+	commands.create(ping.command);
+	commands.create(mute.command);
+	commands.create(unmute.command);
 });
 
 client.on('messageCreate', async (message) => {
@@ -101,7 +84,7 @@ client.on('messageCreate', async (message) => {
 		reactToMentions(message)
 	}
 
-	if (msg.toLowerCase().includes("meme")) {
+	if (msg.toLowerCase().startsWith("!meme")) {
 		message.channel.sendTyping();
 		
 		getRandomFromSubreddit("meme").then((meme) => {
@@ -115,7 +98,7 @@ client.on('messageCreate', async (message) => {
 		});
 	}
 
-	if (msg.toLowerCase().includes("cringe")) {
+	if (msg.toLowerCase().startsWith("!cringe")) {
 		message.channel.sendTyping();
 		
 		getRandomFromSubreddit("cringe").then((cringe) => {
@@ -131,17 +114,12 @@ client.on('messageCreate', async (message) => {
  });
 
 client.on("interactionCreate", async (interaction) => {
-	if (!interaction.isCommand()) return;
+	if (interaction.isCommand()) {
+		const { commandName, options } = interaction;
 
-	const { commandName, options } = interaction;
-
-	if (commandName === "ping") {
-		interaction.reply({
-			content: "Pong!",
-			ephemeral: true
-		});
-	} else if (commandName === "mute") {
-		mute(interaction, options)
+		if (commandName === "ping") ping.default(interaction, options);
+		else if (commandName === "mute") mute.default(interaction, options);
+		else if (commandName === "unmute") unmute.default(interaction, options);
 	}
 });
 
