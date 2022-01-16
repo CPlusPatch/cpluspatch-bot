@@ -20,15 +20,16 @@
 */
 
 // Base libraries
-const { Client, Intents, MessageEmbed } = require("discord.js");
+const { Client, Intents, MessageEmbed, Constants } = require("discord.js");
 const config = require("./config.json");
 const chatTrigger = require("./commands/chatTrigger").default;
 const reactToMentions = require("./commands/reactToMentions").default;
 const getRandomFromSubreddit = require("./commands/reddit").default;
-const cpluspatch_bot = require("./bot.js").default;
+const ms = require("ms");
+const mute = require("./commands/mute").default;
 
 // Spawn Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
 
 client.once("ready", () => {
 	console.log(String.raw`
@@ -38,7 +39,7 @@ client.once("ready", () => {
 	 \ \_____\  \ \_\    \ \_____\  \ \_____\  \/\_____\  \ \_\    \ \_\ \_\    \ \_\  \ \_____\  \ \_\ \_\ 
 	  \/_____/   \/_/     \/_____/   \/_____/   \/_____/   \/_/     \/_/\/_/     \/_/   \/_____/   \/_/\/_/ 
 																											
-	 ______     ______   __  __     _____     __     ______     ______                                      
+	 ______     ______   __  __     _____     __     ______     ______         								
 	/\  ___\   /\__  _\ /\ \/\ \   /\  __-.  /\ \   /\  __ \   /\  ___\                                     
 	\ \___  \  \/_/\ \/ \ \ \_\ \  \ \ \/\ \ \ \ \  \ \ \/\ \  \ \___  \                                    
 	 \/\_____\    \ \_\  \ \_____\  \ \____-  \ \_\  \ \_____\  \/\_____\                                   
@@ -47,6 +48,43 @@ client.once("ready", () => {
 	console.log("\n[+] CPlusPatch is online! ＼(￣▽￣)／");
 	client.user.setActivity("cpluspatch.com", {type: "WATCHING"});
 	console.log("[+] Set activity to \"watching cpluspatch.com\"");
+
+	const guild = client.guilds.cache.get(config.guildId);
+
+	if (guild) {
+		commands = guild.commands;
+	} else {
+		commands = client.application.commands;
+	}
+
+	commands.create({
+		name: "ping",
+		description: "Replies with pong",
+	});
+	commands.create({
+		name: "mute",
+		description: "Mutes a user",
+		options: [
+			{
+				name: "user",
+				description: "The user to mute",
+				required: true,
+				type: Constants.ApplicationCommandOptionTypes.USER
+			},
+			{
+				name: "length",
+				description: "Length of mute",
+				required: false,
+				type: Constants.ApplicationCommandOptionTypes.STRING
+			},
+			{
+				name: "reason",
+				description: "Reason for mute",
+				required: false,
+				type: Constants.ApplicationCommandOptionTypes.STRING
+			}
+		]
+	});
 });
 
 client.on('messageCreate', async (message) => {
@@ -91,6 +129,21 @@ client.on('messageCreate', async (message) => {
 		});
 	}
  });
+
+client.on("interactionCreate", async (interaction) => {
+	if (!interaction.isCommand()) return;
+
+	const { commandName, options } = interaction;
+
+	if (commandName === "ping") {
+		interaction.reply({
+			content: "Pong!",
+			ephemeral: true
+		});
+	} else if (commandName === "mute") {
+		mute(interaction, options)
+	}
+});
 
 // Last line: login to the client
 client.login(config.token);

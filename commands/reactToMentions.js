@@ -1,8 +1,12 @@
 module.exports.default = async (message) => {
 	var msg = message.content.toLowerCase();
+	var replies = [
+		"You called for me?",
+		"I don't know what to respond to that"
+	];
 
-	if (msg.includes("hey") || msg.includes("yo") || msg.includes("hi") || msg.includes("wassup") || msg.includes("whats up") || msg.includes("what's up")) {
-		var replies = [
+	if (msg.includes("hey") || msg.includes("yo") || msg.includes("hi") || msg.includes("wassup") || msg.includes("whats up") || msg.includes("what's up") || msg.includes("what's up") || msg.includes("you doing") || msg.includes("it going")) {
+		replies = [
 			"Hey, what's up",
 			"Hello, would you like gay jokes?\nActually, turns out \”no\” isn't an option",
 			"***WHOMST HATH SUMMONED THE GREAT ONE***",
