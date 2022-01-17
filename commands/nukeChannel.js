@@ -21,6 +21,11 @@ module.exports.default = async message => {
 module.exports.buttons = {
 	nuke_launch_confirm_button: async (interaction, options) => {
 		if (interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+			// Edit the original message to mark the button as disabled
+			var interactionCopy = interaction;
+			interactionCopy.message.components[0].components[0].disabled = true;
+			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],})
+			
 			var strikeEmbed = new MessageEmbed()
 				.setColor("0xe31414")
 				.setTitle(`🧨 LAUNCHING NUKES 🧨`)

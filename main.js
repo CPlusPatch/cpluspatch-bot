@@ -75,7 +75,7 @@ client.once("ready", () => {
 	];
 
 	// Get dev guild ID for slash commands, commane to use global slash commands
-	// const guild = client.guilds.cache.get(config.guildId);
+	const guild = client.guilds.cache.get(config.guildId);
 	if (typeof guild != "undefined") {
 		commands = guild.commands;
 	} else {
@@ -135,10 +135,6 @@ client.on("interactionCreate", async (interaction) => {
 		else if (commandName === "unmute") unmute.default(interaction, options);
 	} else if (interaction.isButton()) {
 		if (interaction.customId === "nuke_launch_confirm_button") {
-			// Edit the original message to mark the button as disabled
-			var interactionCopy = interaction;
-			interactionCopy.message.components[0].components[0].disabled = true;
-			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],})
 			if (await nuke.buttons.nuke_launch_confirm_button(interaction)) {
 				await nuke.nukeChannel(interaction);
 				await nuke.nukeChannel(interaction);
