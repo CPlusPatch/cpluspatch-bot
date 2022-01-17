@@ -25,7 +25,7 @@ module.exports.buttons = {
 			var interactionCopy = interaction;
 			interactionCopy.message.components[0].components[0].disabled = true;
 			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],})
-			
+
 			var strikeEmbed = new MessageEmbed()
 				.setColor("0xe31414")
 				.setTitle(`🧨 LAUNCHING NUKES 🧨`)

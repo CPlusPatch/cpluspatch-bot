@@ -141,6 +141,7 @@ client.on("interactionCreate", async (interaction) => {
 				await nuke.nukeChannel(interaction);
 				await nuke.nukeChannel(interaction);
 				await nuke.nukeChannel(interaction);
+				interaction.channel.send("https://tenor.com/view/explosions-spontaneous-explosion-dynamites-explosion-test-bomb-test-gif-13806891");
 			}
 		}
 	}
