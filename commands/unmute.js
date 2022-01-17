@@ -23,12 +23,19 @@ module.exports.default = async (interaction, options) => {
 		const userMuted = options.getUser("user");
 		const memberToMute = interaction.guild.members.cache.get(userMuted.id);
 
-		await memberToMute.timeout(null);
+		try {
+			await memberToMute.timeout(null);
 
-		embed = new MessageEmbed()
-				.setColor("0x2ad44c")
-				.setTitle(`Unmuted ${userMuted.username}`)
-				.setDescription(`✅ ${userMuted.username} has been unmuted`);
+			embed = new MessageEmbed()
+					.setColor("0x2ad44c")
+					.setTitle(`Unmuted ${userMuted.username}`)
+					.setDescription(`✅ ${userMuted.username} has been unmuted`);
+		}
+		catch {
+			embed = new MessageEmbed()
+				.setColor("0xe11e2b")
+				.setTitle(`I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻`);
+		}
 	}
 
 	interaction.reply({embeds: [embed]});

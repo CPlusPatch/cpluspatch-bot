@@ -42,12 +42,19 @@ module.exports.default = async (interaction, options) => {
 			interaction.reply({content:"Please specify a valid time"});
 			return;
 		}
-		await memberToMute.timeout(timeInMs, reason);
+		try {
+			await memberToMute.timeout(timeInMs, reason);
 
-		embed = new MessageEmbed()
-			.setColor("0xe11e2b")
-			.setTitle(`Muted ${userMuted.username} for ${length}`)
-			.setDescription(`💢 ${userMuted.username} has been muted for **${length}**`);
+			embed = new MessageEmbed()
+				.setColor("0xe11e2b")
+				.setTitle(`Muted ${userMuted.username} for ${length}`)
+				.setDescription(`💢 ${userMuted.username} has been muted for **${length}**`);
+		}
+		catch {
+			embed = new MessageEmbed()
+				.setColor("0xe11e2b")
+				.setTitle(`I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻`);
+		}
 	}
 
 	interaction.reply({embeds: [embed]});

@@ -1,3 +1,5 @@
+const nukeChannel = require('./nukeChannel').default;
+
 module.exports.default = async (message) => {
 	var msg = message.content.toLowerCase();
 	var replies = [
@@ -25,6 +27,11 @@ module.exports.default = async (message) => {
 			"Go fuck yourself",
 			"You shut up you fucking donkey",
 		];
+	}
+
+	if (msg.includes("nuke") || msg.includes("strike")) {
+		nukeChannel(message);
+		return;
 	}
 
 	message.channel.sendTyping();

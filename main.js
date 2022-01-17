@@ -19,6 +19,16 @@
 	@ Contact me at contact@cpluspatch.com or by Discord: CPlusPatch#9373
 */
 
+// This prevents the bot from completely shutting down when an error is encountered while running. Instead, it just ignores it and logs to shell
+// Error handler
+process
+	.on('unhandledRejection', (reason, p) => {
+		console.error(reason, 'Unhandled Rejection at Promise ', p);
+	})
+	.on('uncaughtException', err => {
+		console.error(err, 'Uncaught Exception caught');
+	});
+
 // Base libraries
 const { Client, Intents, MessageEmbed, Permissions } = require("discord.js");
 const Database = require('simplest.db');
@@ -26,10 +36,10 @@ const config = require("./config.json");
 const chatTrigger = require("./commands/chatTrigger").default;
 const reactToMentions = require("./commands/reactToMentions").default;
 const getRandomFromSubreddit = require("./commands/reddit").default;
-const ms = require("ms");
 const mute = require("./commands/mute");
 const unmute = require("./commands/unmute");
 const ping = require("./commands/ping");
+const nuke = require("./commands/nukeChannel");
 
 // Spawn new database
 const db = new Database({
@@ -57,17 +67,20 @@ client.once("ready", () => {
 	client.user.setActivity("cpluspatch.com", {type: "WATCHING"});
 	console.log("[+] Set activity to \"watching cpluspatch.com\"");
 
-	const guild = client.guilds.cache.get(config.guildId);
+	// Registers commands
+	var commands = [
+		ping.command,
+		mute.command,
+		unmute.command
+	];
 
-	if (guild) {
+	// Get dev guild ID for slash commands, commane to use global slash commands
+	// const guild = client.guilds.cache.get(config.guildId);
+	if (typeof guild != "undefined") {
 		commands = guild.commands;
 	} else {
-		commands = client.application.commands;
+		client.application.commands.set(commands);
 	}
-
-	commands.create(ping.command);
-	commands.create(mute.command);
-	commands.create(unmute.command);
 });
 
 client.on('messageCreate', async (message) => {
@@ -120,6 +133,20 @@ client.on("interactionCreate", async (interaction) => {
 		if (commandName === "ping") ping.default(interaction, options);
 		else if (commandName === "mute") mute.default(interaction, options);
 		else if (commandName === "unmute") unmute.default(interaction, options);
+	} else if (interaction.isButton()) {
+		if (interaction.customId === "nuke_launch_confirm_button") {
+			// Edit the original message to mark the button as disabled
+			var interactionCopy = interaction;
+			interactionCopy.message.components[0].components[0].disabled = true;
+			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],})
+			if (await nuke.buttons.nuke_launch_confirm_button(interaction)) {
+				await nuke.nukeChannel(interaction);
+				await nuke.nukeChannel(interaction);
+				await nuke.nukeChannel(interaction);
+				await nuke.nukeChannel(interaction);
+				await nuke.nukeChannel(interaction);
+			}
+		}
 	}
 });
 
