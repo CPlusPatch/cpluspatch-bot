@@ -1,5 +1,15 @@
 const ms = require("ms");
 const { MessageEmbed, Constants, Permissions } = require("discord.js");
+const path = require('path');
+const { I18n } = require('i18n');
+
+const i18n = new I18n({
+  locales: ['en', 'fr'],
+  directory: path.join(__dirname, '../locales')
+})
+const __ = (string, lang, options = undefined) => {
+	return i18n.__({phrase:string, locale:lang}, options);
+}
 
 module.exports.command = {
 	name: "mute",
@@ -26,7 +36,7 @@ module.exports.command = {
 	]
 };
 
-module.exports.default = async (interaction, options) => {
+module.exports.default = async (interaction, options, language) => {
 	var embed = new MessageEmbed()
 		.setColor("0xe11e2b")
 		.setTitle(`You do not have permission to perform this action`);
@@ -39,7 +49,7 @@ module.exports.default = async (interaction, options) => {
 
 		const timeInMs = ms(length);
 		if (!timeInMs) {
-			interaction.reply({content:"Please specify a valid time"});
+			interaction.reply({content:__("Please specify a valid time", language)});
 			return;
 		}
 		try {
@@ -47,8 +57,8 @@ module.exports.default = async (interaction, options) => {
 
 			embed = new MessageEmbed()
 				.setColor("0xe11e2b")
-				.setTitle(`Muted ${userMuted.username} for ${length}`)
-				.setDescription(`💢 ${userMuted.username} has been muted for **${length}**`);
+				.setTitle(__(`Muted {{name}} for {{length}}`, language, {name: userMuted.username, length: length}))
+				.setDescription(__(`💢{{name}} has been muted for **{{length}}**`, language, {name: userMuted.username, length: length}));
 		}
 		catch {
 			embed = new MessageEmbed()

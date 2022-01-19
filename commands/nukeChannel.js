@@ -1,16 +1,26 @@
 const { MessageEmbed, Constants, Permissions, MessageActionRow, MessageButton, CommandInteraction, ButtonInteraction } = require("discord.js");
+const path = require('path');
+const { I18n } = require('i18n');
 
-module.exports.default = async message => {
+const i18n = new I18n({
+  locales: ['en', 'fr'],
+  directory: path.join(__dirname, '../locales')
+})
+const __ = (string, lang, options = undefined) => {
+	return i18n.__({phrase:string, locale:lang}, options)
+}
+
+module.exports.default = async (message, language) => {
 	const confirmEmbed = new MessageEmbed()
 		.setColor("0xe31414")
-		.setTitle(`🚨 Missile command system 🚨`)
-		.setDescription(`Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?`);
+		.setTitle(__(`🚨 Missile command system 🚨`, language))
+		.setDescription(__(`Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?`, language));
 	
 	const confirmEmbedRow = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
 				.setCustomId('nuke_launch_confirm_button')
-				.setLabel('DO IT!')
+				.setLabel(__('DO IT!', language))
 				.setStyle('DANGER')
 				.setEmoji("🚀")
 		);
@@ -19,7 +29,7 @@ module.exports.default = async message => {
 }
 
 module.exports.buttons = {
-	nuke_launch_confirm_button: async (interaction, options) => {
+	nuke_launch_confirm_button: async (interaction, language) => {
 		if (interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
 			// Edit the original message to mark the button as disabled
 			var interactionCopy = interaction;
@@ -28,27 +38,27 @@ module.exports.buttons = {
 
 			var strikeEmbed = new MessageEmbed()
 				.setColor("0xe31414")
-				.setTitle(`🧨 LAUNCHING NUKES 🧨`)
-				.setDescription("```PREPARING MISSILES                     - 100%```");
+				.setTitle(__(`🧨 LAUNCHING NUKES 🧨`, language))
+				.setDescription(__("```PREPARING MISSILES                     - 100%%```", language));
 		
 			await interaction.reply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%\nAIMING FIRING PLATFORM                 - 100%```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%\nAIMING FIRING PLATFORM                 - 100%\nFIRING IN 3```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%\nAIMING FIRING PLATFORM                 - 100%\nFIRING IN 3\nFIRING IN 2```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%\nAIMING FIRING PLATFORM                 - 100%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
-			strikeEmbed.setDescription("```PREPARING MISSILES                     - 100%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%\nAIMING FIRING PLATFORM                 - 100%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```")
+			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```", language));
 			await interaction.editReply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 3000));
 			return true;
@@ -57,7 +67,7 @@ module.exports.buttons = {
 		else {
 			var embed = new MessageEmbed()
 				.setColor("0xe11e2b")
-				.setTitle(`You do not have permission to launch the nukes`);
+				.setTitle(__(`You do not have permission to launch the nukes`, language));
 			
 			interaction.reply({embeds: [embed], ephemeral: true});
 			return false;

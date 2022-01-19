@@ -27,6 +27,10 @@ process
 	})
 	.on('uncaughtException', err => {
 		console.error(err, 'Uncaught Exception caught');
+	})
+	.on("SIGINT", () => {
+		console.log("[-] Exiting bot");
+		client.destroy();
 	});
 
 // Base libraries
@@ -40,11 +44,22 @@ const mute = require("./commands/mute");
 const unmute = require("./commands/unmute");
 const ping = require("./commands/ping");
 const nuke = require("./commands/nukeChannel");
+const setLanguage = require("./commands/setLanguage").default;
+const path = require('path');
+const { I18n } = require('i18n')
+
+const i18n = new I18n({
+  locales: ['en', 'fr'],
+  directory: path.join(__dirname, 'locales')
+})
+const __ = i18n.__;
 
 // Spawn new database
 const db = new Database({
     path: './data.json'
-})
+});
+// Validate database
+if (!db.get("guilds")) db.set("guilds", {});
 
 // Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
@@ -71,30 +86,34 @@ client.once("ready", () => {
 	var commands = [
 		ping.command,
 		mute.command,
-		unmute.command
+		unmute.command,
 	];
 
-	// Get dev guild ID for slash commands, commane to use global slash commands
-	const guild = client.guilds.cache.get(config.guildId);
-	if (typeof guild != "undefined") {
-		commands = guild.commands;
-	} else {
+	// Get dev guild ID for slash commands, comment to use global slash commands
+	const guild = undefined;// client.guilds.cache.get(config.guildId);
+	if (typeof guild == "undefined") {
 		client.application.commands.set(commands);
+		console.log("[+] Set global commands");
+	} else {
+		commands = guild.commands;
+		console.log("[+] Set guild commands");
 	}
 });
 
 client.on('messageCreate', async (message) => {
-	var msg = message.content;
-
-	var triggerChance = 1;
+	// Checks if language is already set for this guild, else sets it to English
+	if (!db.get(`guilds.${message.guildId}`)) db.set(`guilds.${message.guildId}`, {lang: "en"});
+	if (!db.get(`guilds.${message.guildId}.lang`)) db.set(`guilds.${message.guildId}`, {lang: "en"});
+	const language = db.get(`guilds.${message.guildId}.lang`);
 	
+	const msg = message.content;
 	// We don't want to respond to ourselves do we?
 	if (message.author.bot) return;
 
-	chatTrigger(message, triggerChance);
+	chatTrigger(message, language);
 
 	if (message.mentions.has(client.user)) {
-		reactToMentions(message)
+		reactToMentions(message, language)
 	}
 
 	if (msg.toLowerCase().startsWith("!meme")) {
@@ -105,7 +124,7 @@ client.on('messageCreate', async (message) => {
 				.setColor("RANDOM")
 				.setImage(meme.url)
 				.setTitle(meme.title)
-				.setURL(`https://reddit.com/r/${meme.subreddit}`)
+				.setURL(`https://reddit.com/r/${meme.subreddit}`);
 			
 			message.channel.send({embeds: [embed]});
 		});
@@ -119,23 +138,32 @@ client.on('messageCreate', async (message) => {
 				.setColor("RANDOM")
 				.setImage(cringe.url)
 				.setTitle(cringe.title)
-				.setURL(`https://reddit.com/r/${cringe.subreddit}`)
+				.setURL(`https://reddit.com/r/${cringe.subreddit}`);
 			
 			message.channel.send({embeds: [embed]});
 		});
 	}
+
+	if(msg.toLowerCase().startsWith("!lang")) {
+		setLanguage(message, db);
+	}
  });
 
 client.on("interactionCreate", async (interaction) => {
+	// Checks if language is already set for this guild, else sets it to English
+	if (!db.get(`guilds.${interaction.guildId}`)) db.set(`guilds.${interaction.guildId}`, {lang: "en"});
+	if (!db.get(`guilds.${interaction.guildId}.lang`)) db.set(`guilds.${interaction.guildId}`, {lang: "en"});
+	const language = db.get(`guilds.${interaction.guildId}.lang`);
+
 	if (interaction.isCommand()) {
 		const { commandName, options } = interaction;
 
 		if (commandName === "ping") ping.default(interaction, options);
-		else if (commandName === "mute") mute.default(interaction, options);
-		else if (commandName === "unmute") unmute.default(interaction, options);
+		else if (commandName === "mute") mute.default(interaction, options, language);
+		else if (commandName === "unmute") unmute.default(interaction, options, language);
 	} else if (interaction.isButton()) {
 		if (interaction.customId === "nuke_launch_confirm_button") {
-			if (await nuke.buttons.nuke_launch_confirm_button(interaction)) {
+			if (await nuke.buttons.nuke_launch_confirm_button(interaction, language)) {
 				await nuke.nukeChannel(interaction);
 				await nuke.nukeChannel(interaction);
 				await nuke.nukeChannel(interaction);

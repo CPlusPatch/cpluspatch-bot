@@ -1,14 +1,10 @@
-const triggers = require("../assets/triggers.json")
-
-module.exports.default = async (message, triggerChance) => {
+module.exports.default = async (message, language) => {
+	const triggers = require(`../locales/${language}_triggers.json`);
 	var msg = message.content;
 
 	// Automatically responds to messages if keywords match
 	for (var trigger in triggers) {
 		if (msg.toLowerCase().includes(trigger.toLowerCase())) {
-			// Adds a chance for the bot to respond to messages
-			if (Math.random() > triggerChance)
-				return;
 			// We begin typing to add a more realistic bot
 			message.channel.sendTyping();
 			// Waits 2s

@@ -1,0 +1,20 @@
+{
+	"Muted {{name}} for {{length}}": "Muted {{name}} for {{length}}",
+	"💢{{name}} has been muted for **{{length}}**": "💢{{name}} has been muted for **{{length}}**",
+	"Successfully set language to `{{newLanguage}}`!": "Successfully set language to `{{newLanguage}}`!",
+	"You do not have permission to perform this action": "You do not have permission to perform this action",
+	"Unmuted {{username}}": "Unmuted {{username}}",
+	"✅ {{username}} has been unmuted": "✅ {{username}} has been unmuted",
+	"🚨 Missile command system 🚨": "🚨 Missile command system 🚨",
+	"Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?": "Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?",
+	"DO IT!": "DO IT!",
+	"🧨 LAUNCHING NUKES 🧨": "🧨 LAUNCHING NUKES 🧨",
+	"```PREPARING MISSILES                     - 100%```": "```PREPARING MISSILES                     - 100%```",
+	"```PREPARING MISSILES                     - 100%%```": "```PREPARING MISSILES                     - 100%%```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```",
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```"
+}

@@ -1,6 +1,6 @@
 const nukeChannel = require('./nukeChannel').default;
 
-module.exports.default = async (message) => {
+module.exports.default = async (message, language) => {
 	var msg = message.content.toLowerCase();
 	var replies = [
 		"You called for me?",
@@ -30,7 +30,7 @@ module.exports.default = async (message) => {
 	}
 
 	if (msg.includes("nuke") || msg.includes("strike")) {
-		nukeChannel(message);
+		nukeChannel(message, language);
 		return;
 	}
 
