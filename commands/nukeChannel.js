@@ -11,6 +11,7 @@ const __ = (string, lang, options = undefined) => {
 }
 
 module.exports.default = async (message, language) => {
+	if (!message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return;
 	const confirmEmbed = new MessageEmbed()
 		.setColor("0xe31414")
 		.setTitle(__(`🚨 Missile command system 🚨`, language))
