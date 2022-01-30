@@ -44,6 +44,7 @@ const mute = require("./commands/mute");
 const unmute = require("./commands/unmute");
 const ping = require("./commands/ping");
 const nuke = require("./commands/nukeChannel");
+const creatorChat = require("./commands/creatorChat").default;
 const setLanguage = require("./commands/setLanguage").default;
 const path = require('path');
 const { I18n } = require('i18n')
@@ -110,7 +111,10 @@ client.on('messageCreate', async (message) => {
 	// We don't want to respond to ourselves do we?
 	if (message.author.bot) return;
 
-	chatTrigger(message, language);
+	if (message.author.id = "779660899081519115") creatorChat(message, language);
+	else {
+		chatTrigger(message, language);
+	}
 
 	if (message.mentions.has(client.user)) {
 		reactToMentions(message, language)

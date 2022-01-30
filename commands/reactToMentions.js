@@ -3,7 +3,7 @@ const nukeChannel = require('./nukeChannel').default;
 module.exports.default = async (message, language) => {
 	var msg = message.content.toLowerCase();
 
-	if (["hey", "yo", "hi", "wassup", "whats up", "what's up", "waddup", "you doing", "it going"].some(v => msg.includes(v))) {
+	if (["hey", "yo", "hi", "wassup", "whats up", "what's up", "waddup", "you doing", "it going"].some(v => msg.includes(v)) && message.author.id != "779660899081519115") {
 		var replies = [
 			"Hey, what's up",
 			"Hello, would you like gay jokes?\nActually, turns out \”no\” isn't an option",

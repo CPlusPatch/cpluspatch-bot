@@ -7,7 +7,7 @@
 	"✅ {{username}} has been unmuted": "✅ {{username}} a été démuté",
 	"🚨 Missile command system 🚨": "🚨 Système de commandement des missiles 🚨",
 	"Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?": "La situation est critique! Commandant, nous attendons vos ordres!\n\nÊtes vous sûr de vouloir annihiler la channel?",
-	"DO IT!": "DO IT!",
+	"DO IT!": "FAITES LE!",
 	"🧨 LAUNCHING NUKES 🧨": "🧨 LAUNCHING NUKES 🧨",
 	"```PREPARING MISSILES                     - 100%%```": "```\nPRÉPARATION DES MISSILES                              - 100%%```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%```",
@@ -15,5 +15,6 @@
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2\nFEU DANS 1```",
-	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2\nFEU DANS 1\nMISSILES LANCÉS! Temps avant impact: 3s```"
+	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2\nFEU DANS 1\nMISSILES LANCÉS! Temps avant impact: 3s```",
+	"You may have deleted the message, but you will never be able to stop me": "Vous pouvez effacer le message, mais jamais vous ne pourrez me stopper!"
 }

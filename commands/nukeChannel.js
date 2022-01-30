@@ -45,22 +45,58 @@ module.exports.buttons = {
 			await interaction.reply({embeds: [strikeEmbed]});
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```", language));
-			await interaction.editReply({embeds: [strikeEmbed]});
+			try {
+				await interaction.editReply({embeds: [strikeEmbed]});
+			} catch {
+				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
+				await new Promise(r => setTimeout(r, 3000));
+				return true
+			}
 			await new Promise(r => setTimeout(r, 3000));
 			return true;
 
