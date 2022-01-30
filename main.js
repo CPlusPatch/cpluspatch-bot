@@ -111,7 +111,7 @@ client.on('messageCreate', async (message) => {
 	// We don't want to respond to ourselves do we?
 	if (message.author.bot) return;
 
-	if (message.author.id = "779660899081519115" && message.mentions.has(client.user)) creatorChat(message, language);
+	if (message.author.id == "779660899081519115" && message.mentions.has(client.user)) creatorChat(message, language);
 	else {
 		chatTrigger(message, language);
 	}
