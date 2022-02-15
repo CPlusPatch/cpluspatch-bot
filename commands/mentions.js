@@ -1,4 +1,4 @@
-const nukeChannel = require('./nukeChannel').default;
+const nukeChannel = require('./nuke').default;
 
 module.exports.default = async (message, language) => {
 	var msg = message.content.toLowerCase();

@@ -17,5 +17,11 @@
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```": "```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```",
-	"You may have deleted the message, but you will never be able to stop me": "You may have deleted the message, but you will never be able to stop me"
+	"You may have deleted the message, but you will never be able to stop me": "You may have deleted the message, but you will never be able to stop me",
+	"Current language is set to `{{currentLang}}`": "Current language is set to `{{currentLang}}`",
+	"Get trolled bozo, you've been muted for `{{length}}`!": "Get trolled bozo, you've been muted for `{{length}}`!",
+	"Welcome back <!@{{userId}}>, you've been unmuted!": "Welcome back <!@{{userId}}>, you've been unmuted!",
+	"Welcome back <@!{{userId}}>, you've been unmuted!": "Welcome back <@!{{userId}}>, you've been unmuted!",
+	"I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻": "I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻",
+	"Bruh dawg I can't unmute this person, are they admin or something?": "Bruh dawg I can't unmute this person, are they admin or something?"
 }

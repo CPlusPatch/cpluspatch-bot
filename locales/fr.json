@@ -1,10 +1,4 @@
 {
-	"Muted {{name}} for {{length}}": "{{name}} a été muté pour {{length}}",
-	"💢{{name}} has been muted for **{{length}}**": "💢{{name}} sera en mode chut chut pour **{{length}}**",
-	"Successfully set language to `{{newLanguage}}`!": "Language changé a `{{newLanguage}}`!",
-	"You do not have permission to perform this action": "Vous n'avez pas la permission de faire cette action",
-	"Unmuted {{username}}": "{{username}} est libre",
-	"✅ {{username}} has been unmuted": "✅ {{username}} a été démuté",
 	"🚨 Missile command system 🚨": "🚨 Système de commandement des missiles 🚨",
 	"Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?": "La situation est critique! Commandant, nous attendons vos ordres!\n\nÊtes vous sûr de vouloir annihiler la channel?",
 	"DO IT!": "FAITES LE!",
@@ -16,5 +10,6 @@
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2\nFEU DANS 1```",
 	"```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```": "```\nPRÉPARATION DES MISSILES                              - 100%%\nINITIALISATION DU SYSTÈME DE FRAPPE A LONGUE PORTÉE   - 100%%\nCALIBRAGE DE LA PLATFORME DE TIR                      - 100%%\nFEU DANS 3\nFEU DANS 2\nFEU DANS 1\nMISSILES LANCÉS! Temps avant impact: 3s```",
-	"You may have deleted the message, but you will never be able to stop me": "Vous pouvez effacer le message, mais jamais vous ne pourrez me stopper!"
+	"You may have deleted the message, but you will never be able to stop me": "Vous pouvez effacer le message, mais jamais vous ne pourrez me stopper!",
+	"Current language is set to `{{currentLang}}`": "Le language par défault est mis a `{{currentLang}}`"
 }

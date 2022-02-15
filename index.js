@@ -31,39 +31,30 @@ process
 	.on("SIGINT", () => {
 		console.log("[-] Exiting bot");
 		client.destroy();
+		process.exit(1);
 	});
 
 // Base libraries
-const { Client, Intents, MessageEmbed, Permissions } = require("discord.js");
-const Database = require('simplest.db');
-const config = require("./config.json");
-const chatTrigger = require("./commands/chatTrigger").default;
-const reactToMentions = require("./commands/reactToMentions").default;
-const getRandomFromSubreddit = require("./commands/reddit").default;
-const mute = require("./commands/mute");
-const unmute = require("./commands/unmute");
-const ping = require("./commands/ping");
-const nuke = require("./commands/nukeChannel");
-const creatorChat = require("./commands/creatorChat").default;
-const setLanguage = require("./commands/setLanguage").default;
-const path = require('path');
-const { I18n } = require('i18n')
+const { Client, Intents, MessageEmbed } = require("discord.js");
+const Database = require("simplest.db")
+const { token, guildId, activityResetTimeout } = require("./config.json");
+const { I18n } = require('i18n');
 
 const i18n = new I18n({
   locales: ['en', 'fr'],
-  directory: path.join(__dirname, 'locales')
-})
-const __ = i18n.__;
+  directory: './locales'
+});
+const __ = (string, lang, options = undefined) => {
+	return i18n.__({phrase:string, locale:lang}, options)
+}
 
 // Spawn new database
-const db = new Database({
-    path: './data.json'
+const lang_db = new Database({
+    path: './data/lang.json'
 });
-// Validate database
-if (!db.get("guilds")) db.set("guilds", {});
 
 // Spawn Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 
 client.once("ready", () => {
 	console.log(String.raw`
@@ -80,107 +71,86 @@ client.once("ready", () => {
 	  \/_____/     \/_/   \/_____/   \/____/   \/_/   \/_____/   \/_____/
 	`);
 	console.log("\n[+] CPlusPatch is online! ＼(￣▽￣)／");
-	client.user.setActivity("cpluspatch.com", {type: "WATCHING"});
-	console.log("[+] Set activity to \"watching cpluspatch.com\"");
+	setInterval(() => {
+		client.user.setActivity("all of you naughty people", {type: "WATCHING"});
+	}, activityResetTimeout * 100);
+	console.log("[+] Set activity to \"watching all of you naughty people\"");
 
 	// Registers commands
 	var commands = [
-		ping.command,
-		mute.command,
-		unmute.command,
+		require("./commands/settings").command,
+		require("./commands/ping").command,
+		require("./commands/mute").command,
+		require("./commands/meme").command,
+		require("./commands/unmute").command,
+		require("./commands/random_song").command
 	];
 
 	// Get dev guild ID for slash commands, comment to use global slash commands
-	const guild = undefined;// client.guilds.cache.get(config.guildId);
+	const guild = client.guilds.cache.get(guildId);
 	if (typeof guild == "undefined") {
 		client.application.commands.set(commands);
 		console.log("[+] Set global commands");
 	} else {
-		commands = guild.commands;
+		guild.commands.set(commands);
 		console.log("[+] Set guild commands");
 	}
 });
 
 client.on('messageCreate', async (message) => {
-	// Checks if language is already set for this guild, else sets it to English
-	if (!db.get(`guilds.${message.guildId}`)) db.set(`guilds.${message.guildId}`, {lang: "en"});
-	if (!db.get(`guilds.${message.guildId}.lang`)) db.set(`guilds.${message.guildId}`, {lang: "en"});
-	const language = db.get(`guilds.${message.guildId}.lang`);
-	
+	/* const language = require("./commands/settings").getLanguageForGuild(message.guildId);
 	const msg = message.content;
-	// We don't want to respond to ourselves do we?
-	if (message.author.bot) return;
 
-	if (message.author.id == "779660899081519115" && message.mentions.has(client.user)) creatorChat(message, language);
-	else {
-		chatTrigger(message, language);
-	}
+	// Don't react to bots or DMs
+	if (message.author.bot || message.channel.type === 'DM') return; */
 
-	if (message.mentions.has(client.user)) {
-		reactToMentions(message, language)
-	}
-
-	if (msg.toLowerCase().startsWith("!meme")) {
-		message.channel.sendTyping();
-		
-		getRandomFromSubreddit("meme").then((meme) => {
-			const embed = new MessageEmbed()
-				.setColor("RANDOM")
-				.setImage(meme.url)
-				.setTitle(meme.title)
-				.setURL(`https://reddit.com/r/${meme.subreddit}`);
-			
-			message.channel.send({embeds: [embed]});
-		});
-	}
-
-	if (msg.toLowerCase().startsWith("!cringe")) {
-		message.channel.sendTyping();
-		
-		getRandomFromSubreddit("cringe").then((cringe) => {
-			const embed = new MessageEmbed()
-				.setColor("RANDOM")
-				.setImage(cringe.url)
-				.setTitle(cringe.title)
-				.setURL(`https://reddit.com/r/${cringe.subreddit}`);
-			
-			message.channel.send({embeds: [embed]});
-		});
-	}
-
-	if(msg.toLowerCase().startsWith("!lang")) {
-		setLanguage(message, db);
-	}
  });
 
 client.on("interactionCreate", async (interaction) => {
-	// Checks if language is already set for this guild, else sets it to English
-	if (!db.get(`guilds.${interaction.guildId}`)) db.set(`guilds.${interaction.guildId}`, {lang: "en"});
-	if (!db.get(`guilds.${interaction.guildId}.lang`)) db.set(`guilds.${interaction.guildId}`, {lang: "en"});
-	const language = db.get(`guilds.${interaction.guildId}.lang`);
+	const language = require("./commands/settings").getLanguageForGuild(interaction.guildId);
 
 	if (interaction.isCommand()) {
 		const { commandName, options } = interaction;
 
-		if (commandName === "ping") ping.default(interaction, options);
-		else if (commandName === "mute") mute.default(interaction, options, language);
-		else if (commandName === "unmute") unmute.default(interaction, options, language);
-	} else if (interaction.isButton()) {
-		if (interaction.customId === "nuke_launch_confirm_button") {
-			if (await nuke.buttons.nuke_launch_confirm_button(interaction, language)) {
-				await nuke.nukeChannel(interaction);
-				await nuke.nukeChannel(interaction);
-				await nuke.nukeChannel(interaction);
-				await nuke.nukeChannel(interaction);
-				await nuke.nukeChannel(interaction);
-				interaction.channel.send("https://tenor.com/view/explosions-spontaneous-explosion-dynamites-explosion-test-bomb-test-gif-13806891");
+		switch (commandName) {
+			case "ping":
+				return require("./commands/ping").default(interaction, language)
+			case "mute":
+				return require("./commands/mute").default(interaction, language)
+			case "unmute":
+				return require("./commands/unmute").default(interaction, language)
+			case "settings":
+				return require("./commands/settings").default(interaction, language)
+			case "meme":
+				return require("./commands/meme").default(interaction, language)
+			case "song":
+				return require("./commands/random_song").default(interaction, language)
+		}
+	}
+	else if (interaction.isButton()) {
+		switch (interaction.customId) {
+			case "nuke_launch_confirm_button": {
+				if (await buttons.nuke_launch_confirm_button(interaction, language)) {
+					await nukeChannel(interaction);
+					await nukeChannel(interaction);
+					await nukeChannel(interaction);
+					await nukeChannel(interaction);
+					await nukeChannel(interaction);
+					interaction.channel.send("https://tenor.com/view/explosions-spontaneous-explosion-dynamites-explosion-test-bomb-test-gif-13806891");
+				}
 			}
 		}
 	}
 });
 
+module.exports = {
+	client: client,
+	lang_db: lang_db,
+	translate: __,
+};
+
 // Last line: login to the client
-client.login(config.token);
+client.login(token);
 
 /*
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM

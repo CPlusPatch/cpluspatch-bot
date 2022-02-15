@@ -1,51 +1,50 @@
 const { MessageEmbed, Constants, Permissions } = require("discord.js");
-const path = require('path');
-const { I18n } = require('i18n');
 
-const i18n = new I18n({
-  locales: ['en', 'fr'],
-  directory: path.join(__dirname, '../locales')
-})
-const __ = (string, lang, options = undefined) => {
-	return i18n.__({phrase:string, locale:lang}, options)
-}
+module.exports = {
+	command: {
+		name: "unmute",
+		description: "Unmutes a user",
+		options: [
+			{
+				name: "user",
+				description: "The user to unmute",
+				required: true,
+				type: Constants.ApplicationCommandOptionTypes.USER
+			},
+		]
+	},
 
-module.exports.command = {
-	name: "unmute",
-	description: "Unmutes a user",
-	options: [
-		{
-			name: "user",
-			description: "The user to unmute",
-			required: true,
-			type: Constants.ApplicationCommandOptionTypes.USER
-		},
-	]
-};
-
-module.exports.default = async (interaction, options, language) => {
-	var embed = new MessageEmbed()
-		.setColor("0xe11e2b")
-		.setTitle(__(`You do not have permission to perform this action`, language));
-
-	if (interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) {
+	default: async (interaction, language) => {
+		const { translate: __ } = require('../index');
+		
+		if (!interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) return interaction.reply({content:"Hey chief, you can't do that, you gotta have the right perms to unmute people", ephemeral: true})
+		const { options } = interaction;
 		const userMuted = options.getUser("user");
 		const memberToMute = interaction.guild.members.cache.get(userMuted.id);
+		const embed = new MessageEmbed();
 
 		try {
 			await memberToMute.timeout(null);
+			
+			embed
+				.setAuthor({
+					name: memberToMute.user.tag,
+					iconURL: await memberToMute.user.avatarURL(),
+				})
+				.setColor("#5ab14e")
+				.setDescription(__("Welcome back <@!{{userId}}>, you've been unmuted!", language, {userId: userMuted.id}))
+				.setFooter({
+					text: `Unmuted by ${interaction.user.tag}`
+				})
+				.setTimestamp()
 
-			embed = new MessageEmbed()
-					.setColor("0x2ad44c")
-					.setTitle(__("Unmuted {{username}}", language, {username: userMuted.username}))
-					.setDescription(__(`✅ {{username}} has been unmuted`, language, {username: userMuted.username}));
 		}
 		catch {
-			embed = new MessageEmbed()
-				.setColor("0xe11e2b")
-				.setTitle(__(`I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻`, language));
+			embed
+				.setColor("#df9c20")
+				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language))
 		}
+	
+		interaction.reply({embeds: [embed]});
 	}
-
-	interaction.reply({embeds: [embed]});
-};
+}
