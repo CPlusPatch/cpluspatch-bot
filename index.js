@@ -93,6 +93,7 @@ client.once("ready", () => {
 	const guild = client.guilds.cache.get(guildId);
 	if (typeof guild == "undefined") {
 		client.application.commands.set(commands);
+		guild.commands.set([]);
 		console.log("[+] Set global commands");
 	} else {
 		guild.commands.set(commands);
