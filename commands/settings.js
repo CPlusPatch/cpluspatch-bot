@@ -1,4 +1,5 @@
 const { MessageEmbed, Constants, Permissions } = require("discord.js");
+const ms = require("ms");
 
 module.exports = {
 	command: {
@@ -40,6 +41,39 @@ module.exports = {
 						options: []
 					}
 				]
+			},
+			{
+				name: "responses",
+				description: "Random message response settings",
+				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				options: [
+					{
+						name: "toggle",
+						description: "Toggles random message responses",
+						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						options: [
+							{
+								name: "enabled",
+								description: "Whether responses should be sent",
+								required: true,
+								type: Constants.ApplicationCommandOptionTypes.BOOLEAN
+							}
+						]
+					},
+					{
+						name: "disablefor",
+						description: "Temporarily disables random responses for some time",
+						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						options: [
+							{
+								name: "time",
+								description: "Time to suspend responses for",
+								required: true,
+								type: Constants.ApplicationCommandOptionTypes.STRING
+							}
+						]
+					}
+				]
 			}
 		]
 	},
@@ -73,6 +107,35 @@ module.exports = {
 							.setDescription(__("Current language is set to `{{currentLang}}`", lang, {currentLang: lang}));
 						
 						interaction.reply({ embeds: [embed] });
+					}
+				}
+			}
+			case "responses": {
+				const { mute_db, emojis } = require("../index.js");
+				if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
+				switch(interaction.options.getSubcommand()) {
+					case "toggle": {
+						const enabled = interaction.options.getBoolean("enabled");
+
+						mute_db.set(`mute_${interaction.guild.id}`, !enabled);
+						const embed = new MessageEmbed()
+							.setTitle("Responses")
+							.setColor(enabled ? "#00AE86" : "#6d05fa")
+							.setDescription(`${enabled ? emojis.activated : emojis.deactivated} Responses have been successfully ${enabled ? "enabled" : "disabled"}`);
+						return interaction.reply({embeds:[embed]});
+					}
+					case "disablefor": {
+						const time = ms(interaction.options.getString("time") ?? "1s");
+						if (!time) return interaction.reply({content:__("Please specify a valid time", language), ephemeral: true});
+						mute_db.set(`mute_${interaction.guild.id}`, true);
+						setTimeout(() => {
+							mute_db.set(`mute_${interaction.guild.id}`, false);
+						}, time);
+						const embed = new MessageEmbed()
+							.setTitle("Responses")
+							.setColor("#6d05fa")
+							.setDescription(`${emojis.deactivated} Responses will be disabled for \`${interaction.options.getString("time")}\``);
+						return interaction.reply({embeds:[embed]});
 					}
 				}
 			}

@@ -1,6 +1,6 @@
 const data = require("../static/songs.json");
 const SpotifyWebApi = require('spotify-web-api-node');
-const { spotifyToken } = require("../config.json");
+const { spotifyClientId, spotifyClientSecret } = require("../config.json");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
@@ -13,16 +13,25 @@ module.exports = {
 	default: async (interaction, language) => {
 		/* const song = data[Math.floor(Math.random() * data.length)];
 		console.log(song); */
-		var spotifyApi = new SpotifyWebApi();
-		spotifyApi.setAccessToken(spotifyToken);
-		spotifyApi.getPlaylist('5WMs9w0lo6NOA23rzUpbmK')
-			.then(function(data) {
-				const songs = data.body.tracks.items;
-				const song = songs[Math.floor(Math.random() * songs.length)];
-				interaction.reply({ content:song.track.external_urls.spotify });
-			}, function(err) {
-				console.error(err);
-				interaction.reply("Something went wrong! Please try again later or report this, idk");
+		let spotifyApi = new SpotifyWebApi({
+			clientId: spotifyClientId,
+			clientSecret: spotifyClientSecret,
+		})
+		spotifyApi.clientCredentialsGrant().then(
+			function(data) {
+				spotifyApi.setAccessToken(data.body['access_token']);
+				spotifyApi.getPlaylist('5WMs9w0lo6NOA23rzUpbmK')
+				.then(function(data) {
+					const songs = data.body.tracks.items;
+					const song = songs[Math.floor(Math.random() * songs.length)];
+					interaction.reply({ content:song.track.external_urls.spotify });
+				}, function(err) {
+					console.error(err);
+					interaction.reply("Something went wrong! Please try again later or report this, idk");
+				});
+			}
+			).catch(function(err) {
+				console.log('Something went wrong when retrieving an access token', err);
 			});
 	}
 }

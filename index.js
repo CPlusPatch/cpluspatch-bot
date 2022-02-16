@@ -48,9 +48,12 @@ const __ = (string, lang, options = undefined) => {
 	return i18n.__({phrase:string, locale:lang}, options)
 }
 
-// Spawn new database
+// Spawn new databases
 const lang_db = new Database({
     path: './data/lang.json'
+});
+const mute_db = new Database({
+    path: './data/toggle_responses.json'
 });
 
 // Spawn Client instance
@@ -94,6 +97,12 @@ client.once("ready", () => {
 	} else {
 		guild.commands.set(commands);
 		console.log("[+] Set guild commands");
+	}
+
+	// Set emojis
+	module.exports.emojis = {
+		deactivated: client.emojis.cache.get("933406960756346912"),
+		activated: client.emojis.cache.get("933406961762963527")
 	}
 });
 
@@ -146,7 +155,9 @@ client.on("interactionCreate", async (interaction) => {
 module.exports = {
 	client: client,
 	lang_db: lang_db,
+	mute_db: mute_db,
 	translate: __,
+	emojis: {}
 };
 
 // Last line: login to the client

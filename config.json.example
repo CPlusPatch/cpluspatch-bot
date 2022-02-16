@@ -2,5 +2,7 @@
 	"clientId": "",
 	"token": "",
 	"guildId": "",
-	"activityResetTimeout": 15
+	"activityResetTimeout": 30,
+	"spotifyClientId": "",
+	"spotifyClientSecret": ""
 }
