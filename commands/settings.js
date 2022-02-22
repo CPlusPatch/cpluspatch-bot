@@ -1,5 +1,6 @@
 const { MessageEmbed, Constants, Permissions } = require("discord.js");
 const ms = require("ms");
+const { activityResetTimeout } = require("../config.json");
 
 module.exports = {
 	command: {
@@ -74,6 +75,46 @@ module.exports = {
 						]
 					}
 				]
+			},
+			{
+				name: "status",
+				description: "Change the status of the bot",
+				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				options: [
+					{
+						name: "set",
+						description: "Set the status of the bot to a string",
+						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						options: [
+							{
+								name: "type",
+								description: "What kind of activity to set in the status",
+								required: true,
+								type: Constants.ApplicationCommandOptionTypes.STRING,
+								choices: [
+									{
+										name: "Watching",
+										value: "WATCHING"
+									},
+									{
+										name: "Playing",
+										value: "PLAYING"
+									},
+									{
+										name: "Listening",
+										value: "LISTENING"
+									}
+								]
+							},
+							{
+								name: "status",
+								description: "The status text",
+								required: true,
+								type: Constants.ApplicationCommandOptionTypes.STRING
+							}
+						]
+					}
+				]
 			}
 		]
 	},
@@ -99,6 +140,7 @@ module.exports = {
 							content: __("You need Manage Server permissions to do this, stupid", lang),
 							ephemeral: true
 						});
+						break;
 					}
 					case "current": {
 						const embed = new MessageEmbed()
@@ -109,12 +151,14 @@ module.exports = {
 						interaction.reply({ embeds: [embed] });
 					}
 				}
+				break;
 			}
 			case "responses": {
 				const { mute_db, emojis } = require("../index.js");
-				if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
+				
 				switch(interaction.options.getSubcommand()) {
 					case "toggle": {
+						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						const enabled = interaction.options.getBoolean("enabled");
 
 						mute_db.set(`mute_${interaction.guild.id}`, !enabled);
@@ -126,6 +170,7 @@ module.exports = {
 					}
 					case "disablefor": {
 						const time = ms(interaction.options.getString("time") ?? "1s");
+						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) && time > 1000 * 60 * 60) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						if (!time) return interaction.reply({content:__("Please specify a valid time", language), ephemeral: true});
 						mute_db.set(`mute_${interaction.guild.id}`, true);
 						setTimeout(() => {
@@ -138,6 +183,19 @@ module.exports = {
 						return interaction.reply({embeds:[embed]});
 					}
 				}
+				break;
+			}
+			case "status": {
+				switch(interaction.options.getSubcommand()) {
+					case "set": {
+						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
+						clearInterval(interaction.client.activityInterval);
+						interaction.client.activityInterval = setInterval(() => {
+							interaction.client.user.setActivity(interaction.options.getString("status"), { type: interaction.options.getString("type") });
+						}, activityResetTimeout * 100);
+						interaction.reply({ content: "It has been done.", ephemeral: true });
+					}
+				}
 			}
 		}
 	},
@@ -145,5 +203,10 @@ module.exports = {
 	getLanguageForGuild: (guildId) => {
 		const { lang_db } = require('../index');
 		return lang_db.get(`lang_${guildId}`) ?? "en";
+	},
+
+	getGuildMuteStatus : (guildId) => {
+		const { mute_db } = require('../index');
+		return mute_db.get(`mute_${guildId}`) ?? false;
 	}
-}
+};

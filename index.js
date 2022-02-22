@@ -36,7 +36,7 @@ process
 
 // Base libraries
 const { Client, Intents, MessageEmbed } = require("discord.js");
-const Database = require("simplest.db")
+const Database = require("simplest.db");
 const { token, guildId, activityResetTimeout } = require("./config.json");
 const { I18n } = require('i18n');
 
@@ -45,8 +45,8 @@ const i18n = new I18n({
   directory: './locales'
 });
 const __ = (string, lang, options = undefined) => {
-	return i18n.__({phrase:string, locale:lang}, options)
-}
+	return i18n.__({phrase:string, locale:lang}, options);
+};
 
 // Spawn new databases
 const lang_db = new Database({
@@ -57,7 +57,17 @@ const mute_db = new Database({
 });
 
 // Spawn Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES], partials: ["CHANNEL"] });
+
+const nodes = [
+	{
+		host: 'losingtime.dpaste.org',
+		port: 2124,
+		password: 'SleepingOnTrains',
+	}
+];
+client.music = require("./commands/music").initMusicClient(client, nodes);
+client.on('rawWS', packet => client.music.packetUpdate(packet));
 
 client.once("ready", () => {
 	console.log(String.raw`
@@ -74,10 +84,11 @@ client.once("ready", () => {
 	  \/_____/     \/_/   \/_____/   \/____/   \/_/   \/_____/   \/_____/
 	`);
 	console.log("\n[+] CPlusPatch is online! ＼(￣▽￣)／");
-	setInterval(() => {
+	client.activityInterval = setInterval(() => {
 		client.user.setActivity("all of you naughty people", {type: "WATCHING"});
 	}, activityResetTimeout * 100);
 	console.log("[+] Set activity to \"watching all of you naughty people\"");
+	client.music.start(client.user.id);
 
 	// Registers commands
 	var commands = [
@@ -86,14 +97,14 @@ client.once("ready", () => {
 		require("./commands/mute").command,
 		require("./commands/meme").command,
 		require("./commands/unmute").command,
-		require("./commands/random_song").command
+		require("./commands/random_song").command,
+		require("./commands/music").command
 	];
 
 	// Get dev guild ID for slash commands, comment to use global slash commands
 	const guild = client.guilds.cache.get(guildId);
 	if (typeof guild == "undefined") {
 		client.application.commands.set(commands);
-		guild.commands.set([]);
 		console.log("[+] Set global commands");
 	} else {
 		guild.commands.set(commands);
@@ -104,16 +115,19 @@ client.once("ready", () => {
 	module.exports.emojis = {
 		deactivated: client.emojis.cache.get("933406960756346912"),
 		activated: client.emojis.cache.get("933406961762963527")
-	}
+	};
 });
 
+// Needed for Lavalink
+client.on('raw', packet => client.music.packetUpdate(packet));
+
 client.on('messageCreate', async (message) => {
-	/* const language = require("./commands/settings").getLanguageForGuild(message.guildId);
+	const language = require("./commands/settings").getLanguageForGuild(message.guildId);
 	const msg = message.content;
 
 	// Don't react to bots or DMs
-	if (message.author.bot || message.channel.type === 'DM') return; */
-
+	if (message.author.bot || message.channel.type === 'DM') return;
+	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) return require("./commands/responses").default(message, language);
  });
 
 client.on("interactionCreate", async (interaction) => {
@@ -124,17 +138,19 @@ client.on("interactionCreate", async (interaction) => {
 
 		switch (commandName) {
 			case "ping":
-				return require("./commands/ping").default(interaction, language)
+				return require("./commands/ping").default(interaction, language);
 			case "mute":
-				return require("./commands/mute").default(interaction, language)
+				return require("./commands/mute").default(interaction, language);
 			case "unmute":
-				return require("./commands/unmute").default(interaction, language)
+				return require("./commands/unmute").default(interaction, language);
 			case "settings":
-				return require("./commands/settings").default(interaction, language)
+				return require("./commands/settings").default(interaction, language);
 			case "meme":
-				return require("./commands/meme").default(interaction, language)
+				return require("./commands/meme").default(interaction, language);
 			case "song":
-				return require("./commands/random_song").default(interaction, language)
+				return require("./commands/random_song").default(interaction, language);
+			case "music":
+				return require("./commands/music").default(interaction, language);
 		}
 	}
 	else if (interaction.isButton()) {
