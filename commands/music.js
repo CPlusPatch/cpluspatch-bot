@@ -32,7 +32,7 @@ module.exports = {
 				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
 				options: []
 			},
-			{
+			/* {
 				name: "resume",
 				description: "Resumes playback",
 				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
@@ -49,19 +49,19 @@ module.exports = {
 				description: "Stops playback",
 				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
 				options: [],
-			},
+			}, */
 			{
 				name: "skip",
 				description: "Skips the currently playing track",
 				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
 				options: []
 			},
-			{
+			/* {
 				name: "queue",
 				description: "Shows every current track in the queue",
 				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
 				options: []
-			}
+			} */
 		]
 	},
 
