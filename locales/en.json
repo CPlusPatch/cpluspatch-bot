@@ -23,5 +23,6 @@
 	"Welcome back <!@{{userId}}>, you've been unmuted!": "Welcome back <!@{{userId}}>, you've been unmuted!",
 	"Welcome back <@!{{userId}}>, you've been unmuted!": "Welcome back <@!{{userId}}>, you've been unmuted!",
 	"I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻": "I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻",
-	"Bruh dawg I can't unmute this person, are they admin or something?": "Bruh dawg I can't unmute this person, are they admin or something?"
+	"Bruh dawg I can't unmute this person, are they admin or something?": "Bruh dawg I can't unmute this person, are they admin or something?",
+	"Set status to `{{status}}`": "Set status to `{{status}}`"
 }

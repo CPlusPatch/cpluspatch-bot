@@ -44,9 +44,7 @@ const i18n = new I18n({
   locales: ['en', 'fr'],
   directory: './locales'
 });
-const __ = (string, lang, options = undefined) => {
-	return i18n.__({phrase:string, locale:lang}, options);
-};
+const __ = (string, lang, options = undefined) => i18n.__({phrase:string, locale:lang}, options);
 
 // Spawn new databases
 const lang_db = new Database({
@@ -55,19 +53,12 @@ const lang_db = new Database({
 const mute_db = new Database({
     path: './data/toggle_responses.json'
 });
+const role_db = new Database({
+    path: './data/roles.json'
+});
 
 // Spawn Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES], partials: ["CHANNEL"] });
-
-const nodes = [
-	{
-		host: 'losingtime.dpaste.org',
-		port: 2124,
-		password: 'SleepingOnTrains',
-	}
-];
-client.music = require("./commands/music").initMusicClient(client, nodes);
-client.on('rawWS', packet => client.music.packetUpdate(packet));
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 
 client.once("ready", () => {
 	console.log(String.raw`
@@ -88,7 +79,6 @@ client.once("ready", () => {
 		client.user.setActivity("all of you naughty people", {type: "WATCHING"});
 	}, activityResetTimeout * 100);
 	console.log("[+] Set activity to \"watching all of you naughty people\"");
-	client.music.start(client.user.id);
 
 	// Registers commands
 	var commands = [
@@ -98,7 +88,7 @@ client.once("ready", () => {
 		require("./commands/meme").command,
 		require("./commands/unmute").command,
 		require("./commands/random_song").command,
-		require("./commands/music").command
+		require("./commands/roles").command,
 	];
 
 	// Get dev guild ID for slash commands, comment to use global slash commands
@@ -117,9 +107,6 @@ client.once("ready", () => {
 		activated: client.emojis.cache.get("933406961762963527")
 	};
 });
-
-// Needed for Lavalink
-client.on('raw', packet => client.music.packetUpdate(packet));
 
 client.on('messageCreate', async (message) => {
 	const language = require("./commands/settings").getLanguageForGuild(message.guildId);
@@ -149,8 +136,8 @@ client.on("interactionCreate", async (interaction) => {
 				return require("./commands/meme").default(interaction, language);
 			case "song":
 				return require("./commands/random_song").default(interaction, language);
-			case "music":
-				return require("./commands/music").default(interaction, language);
+			case "roles":
+				return require("./commands/roles").default(interaction, language);
 		}
 	}
 	else if (interaction.isButton()) {
@@ -167,12 +154,16 @@ client.on("interactionCreate", async (interaction) => {
 			}
 		}
 	}
+	else if (interaction.isSelectMenu()) {
+		await require("./commands/roles").checkForRoleEvent(interaction, language);
+	}
 });
 
 module.exports = {
 	client: client,
 	lang_db: lang_db,
 	mute_db: mute_db,
+	role_db: role_db,
 	translate: __,
 	emojis: {}
 };

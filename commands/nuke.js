@@ -5,10 +5,10 @@ const { I18n } = require('i18n');
 const i18n = new I18n({
   locales: ['en', 'fr'],
   directory: path.join(__dirname, '../locales')
-})
+});
 const __ = (string, lang, options = undefined) => {
-	return i18n.__({phrase:string, locale:lang}, options)
-}
+	return i18n.__({phrase:string, locale:lang}, options);
+};
 
 module.exports.default = async (message, language) => {
 	if (!message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return;
@@ -27,7 +27,7 @@ module.exports.default = async (message, language) => {
 		);
 	
 	message.reply({embeds: [confirmEmbed], components: [confirmEmbedRow]});
-}
+};
 
 module.exports.buttons = {
 	nuke_launch_confirm_button: async (interaction, language) => {
@@ -35,7 +35,7 @@ module.exports.buttons = {
 			// Edit the original message to mark the button as disabled
 			var interactionCopy = interaction;
 			interactionCopy.message.components[0].components[0].disabled = true;
-			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],})
+			interaction.message.edit({embeds:[interactionCopy.message.embeds[0]], components:[interactionCopy.message.components[0]],});
 
 			var strikeEmbed = new MessageEmbed()
 				.setColor("0xe31414")
@@ -50,7 +50,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%```", language));
@@ -59,7 +59,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3```", language));
@@ -68,7 +68,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2```", language));
@@ -77,7 +77,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1```", language));
@@ -86,7 +86,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 1000));
 			strikeEmbed.setDescription(__("```PREPARING MISSILES                     - 100%%\nINITIALISING LONG-RANGE STRIKE SYSTEM  - 100%%\nAIMING FIRING PLATFORM                 - 100%%\nFIRING IN 3\nFIRING IN 2\nFIRING IN 1\nMISSILES OUT! Estimated time until strike: 3s```", language));
@@ -95,7 +95,7 @@ module.exports.buttons = {
 			} catch {
 				await interaction.followUp(__("You may have deleted the message, but you will never be able to stop me", language));
 				await new Promise(r => setTimeout(r, 3000));
-				return true
+				return true;
 			}
 			await new Promise(r => setTimeout(r, 3000));
 			return true;

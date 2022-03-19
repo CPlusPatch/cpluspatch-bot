@@ -2,9 +2,10 @@ const nukeChannel = require('./nuke').default;
 
 module.exports.default = async (message, language) => {
 	var msg = message.content.toLowerCase();
+	var replies;
 
 	if (["hey", "yo", "hi", "wassup", "whats up", "what's up", "waddup", "you doing", "it going"].some(v => msg.includes(v)) && message.author.id !== "779660899081519115") {
-		var replies = [
+		replies = [
 			"Hey, what's up",
 			"Hello, would you like gay jokes?\nActually, turns out \”no\” isn't an option",
 			"***WHOMST HATH SUMMONED THE GREAT ONE***",
@@ -16,7 +17,7 @@ module.exports.default = async (message, language) => {
 	}
 
 	if (["stfu", "shut", "fuck you", "go fuck yourself"].some(v => msg.includes(v))) {
-		var replies = [
+		replies = [
 			"No you shut the fuck up you fucking retard you look like someone stepped on your face",
 			"Fucking stfu will you?",
 			"just stop existing please",
@@ -27,7 +28,7 @@ module.exports.default = async (message, language) => {
 	}
 
 	if (["didn't ask", "who asked"].some(v => msg.includes(v))) {
-		var replies = [
+		replies = [
 			"https://c.tenor.com/qZDvDAaCRXQAAAAM/dont-care-didnt-ask.gif",
 		];
 	}
@@ -44,4 +45,4 @@ module.exports.default = async (message, language) => {
 
 		message.reply(replies[Math.floor(Math.random()*replies.length)]);
 	}
-}
+};

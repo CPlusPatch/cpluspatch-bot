@@ -101,7 +101,7 @@ module.exports = {
 										value: "PLAYING"
 									},
 									{
-										name: "Listening",
+										name: "Listening to",
 										value: "LISTENING"
 									}
 								]
@@ -193,7 +193,9 @@ module.exports = {
 						interaction.client.activityInterval = setInterval(() => {
 							interaction.client.user.setActivity(interaction.options.getString("status"), { type: interaction.options.getString("type") });
 						}, activityResetTimeout * 100);
-						interaction.reply({ content: "It has been done.", ephemeral: true });
+						interaction.reply({ content: __("Set status to `{{status}}`", lang, {
+							status: interaction.options.getString("status")
+						}), ephemeral: true });
 					}
 				}
 			}
