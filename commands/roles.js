@@ -1,4 +1,4 @@
-const { MessageSelectMenu, Constants, MessageActionRow, Permissions } = require("discord.js");
+const { MessageSelectMenu, Constants, MessageActionRow, Permissions, MessageButton } = require("discord.js");
 
 module.exports = {
 	command: {
@@ -362,13 +362,22 @@ module.exports = {
 									value: options.getMentionable("staff-updates").id.toString(),
 									emoji: "📢"
 								},
-							]),
+							])
+							.setMaxValues(3),
 					);
+				
+					const row2 = new MessageActionRow()
+						.addComponents(
+							new MessageButton()
+								.setCustomId('clear-pings')
+								.setLabel('Clear')
+								.setStyle('DANGER')
+						);
 				
 				for (var i of ["server-updates", "modpack-updates", "staff-updates"]) {
 					role_db.set(`${interaction.guild.id}.ping.${i}`, options.getMentionable(i).id.toString());
 				}
-				return interaction.reply({ content: "Do you want to be pinged?", components: [row] });
+				return interaction.reply({ content: "Do you want to be pinged?", components: [row, row2] });
 			}
 		}
 	},
@@ -421,14 +430,29 @@ module.exports = {
 
 		// Check for ping roles`
 		if (Object.values(role_db.get(`${interaction.guild.id}.ping`)).indexOf(interaction.values[0].toString()) > -1) {
+			var rolesUpdated = false;
 			for (i of ["server-updates", "modpack-updates", "staff-updates"]) {
 				const role = interaction.guild.roles.cache.find(r => r.id === role_db.get(`${interaction.guild.id}.ping.${i}`));
 				interaction.member.roles.remove(role);
-				if (role_db.get(`${interaction.guild.id}.ping.${i}`) == interaction.values[0]) {
-					interaction.member.roles.add(role);
-					interaction.reply({ content: `You've been given the \`${role.name}\` role!`, ephemeral: true });
+				for (var j of [0, 1, 2]) {
+					if (role_db.get(`${interaction.guild.id}.ping.${i}`) == interaction.values[j]) {
+						interaction.member.roles.add(role);
+						rolesUpdated = true;
+					}
 				}
 			}
+			if (rolesUpdated) {
+				interaction.reply({ content: `Roles updated!`, ephemeral: true });
+			}
 		}
+	},
+
+	clearPingRoles(interaction, lang) {
+		const { role_db, translate: __ } = require('../index');
+		for (var i of ["server-updates", "modpack-updates", "staff-updates"]) {
+			const role = interaction.guild.roles.cache.find(r => r.id === role_db.get(`${interaction.guild.id}.ping.${i}`));
+			interaction.member.roles.remove(role);
+		}
+		interaction.reply({ content: "Ping roles cleared!", ephemeral: true });
 	}
 };

@@ -30,7 +30,7 @@ module.exports = {
 	default: async (interaction, language) => {
 		const { translate: __ } = require('../index');
 
-		if (!interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) return interaction.reply({content:"Hey chief, you can't do that, you gotta have the right perms to mute people", ephemeral: true})
+		if (!interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) return interaction.reply({content:"Hey chief, you can't do that, you gotta have the right perms to mute people", ephemeral: true});
 		const { options } = interaction;
 		const userMuted = options.getUser("user");
 		const length = options.getString("length", false) ?? "1h";
@@ -50,17 +50,17 @@ module.exports = {
 					iconURL: await memberToMute.user.avatarURL(),
 				})
 				.setColor("#bb0af5")
-				.setDescription(__("Get trolled bozo, you've been muted for `{{length}}`!", language, {length: length}))
+				.setDescription(__("Get trolled bozo, you've been muted for `{{length}}`!\n", language, {length: length}))
 				.setFooter({
 					text: `Muted by ${interaction.user.tag}`
 				})
-				.setTimestamp()
+				.setTimestamp();
 
 		}
 		catch (e) {
 			embed
 				.setColor("#df9c20")
-				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language))
+				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language));
 		}
 		return interaction.reply({ embeds: [embed] });
 	}
