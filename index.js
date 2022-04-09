@@ -89,6 +89,7 @@ client.once("ready", () => {
 		require("./commands/unmute").command,
 		require("./commands/random_song").command,
 		require("./commands/roles").command,
+		require("./commands/echo").command,
 	];
 
 	// Get dev guild ID for slash commands, comment to use global slash commands
@@ -138,8 +139,11 @@ client.on("interactionCreate", async (interaction) => {
 				return require("./commands/random_song").default(interaction, language);
 			case "roles":
 				return require("./commands/roles").default(interaction, language);
+			case "fard":
+				return require("./commands/echo").default(interaction, language);
 		}
 	}
+
 	else if (interaction.isButton()) {
 		switch (interaction.customId) {
 			case "nuke_launch_confirm_button": {

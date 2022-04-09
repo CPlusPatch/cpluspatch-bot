@@ -17,7 +17,7 @@ module.exports = {
 	default: async (interaction, language) => {
 		const { translate: __ } = require('../index');
 		
-		if (!interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) return interaction.reply({content:"Hey chief, you can't do that, you gotta have the right perms to unmute people", ephemeral: true})
+		if (!interaction.member.permissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) return interaction.reply({content:"Hey chief, you can't do that, you gotta have the right perms to unmute people", ephemeral: true});
 		const { options } = interaction;
 		const userMuted = options.getUser("user");
 		const memberToMute = interaction.guild.members.cache.get(userMuted.id);
@@ -36,15 +36,15 @@ module.exports = {
 				.setFooter({
 					text: `Unmuted by ${interaction.user.tag}`
 				})
-				.setTimestamp()
+				.setTimestamp();
 
 		}
 		catch {
 			embed
 				.setColor("#df9c20")
-				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language))
+				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language));
 		}
 	
 		interaction.reply({embeds: [embed]});
 	}
-}
+};
