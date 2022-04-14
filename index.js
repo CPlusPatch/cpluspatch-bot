@@ -115,10 +115,10 @@ client.on('messageCreate', async (message) => {
 
 	// Don't react to bots or DMs
 	if (message.author.bot || message.channel.type === 'DM') return;
-	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) return require("./commands/responses").default(message, language);
+	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) require("./commands/responses").default(message, language);
 	// Check if bot is mentioned
 	if (message.mentions.has(client.user)) {
-		if (["nukes", "bomb", "airstrike"].some(v => msg.includes(v))) {
+		if (["nuke", "bomb", "strike", "hell", "rain"].some(v => msg.includes(v))) {
 			require("./commands/nuke").default(message, language);
 		}
 	}
