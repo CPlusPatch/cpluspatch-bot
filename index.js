@@ -116,6 +116,12 @@ client.on('messageCreate', async (message) => {
 	// Don't react to bots or DMs
 	if (message.author.bot || message.channel.type === 'DM') return;
 	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) return require("./commands/responses").default(message, language);
+	// Check if bot is mentioned
+	if (message.mentions.has(client.user)) {
+		if (["nukes", "bomb", "airstrike"].some(v => msg.includes(v))) {
+			require("./commands/nuke").default(message, language);
+		}
+	}
  });
 
 client.on("interactionCreate", async (interaction) => {
@@ -147,15 +153,7 @@ client.on("interactionCreate", async (interaction) => {
 	else if (interaction.isButton()) {
 		switch (interaction.customId) {
 			case "nuke_launch_confirm_button": {
-				if (await buttons.nuke_launch_confirm_button(interaction, language)) {
-					await nukeChannel(interaction);
-					await nukeChannel(interaction);
-					await nukeChannel(interaction);
-					await nukeChannel(interaction);
-					await nukeChannel(interaction);
-					interaction.channel.send("https://tenor.com/view/explosions-spontaneous-explosion-dynamites-explosion-test-bomb-test-gif-13806891");
-				}
-				break;
+				return require("./commands/nuke").beginNuke(interaction, language);
 			}
 
 			case "clear-pings": {
