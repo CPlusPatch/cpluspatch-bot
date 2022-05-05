@@ -50,7 +50,7 @@ module.exports = {
 					iconURL: await memberToMute.user.avatarURL(),
 				})
 				.setColor("#bb0af5")
-				.setDescription(__("Get trolled bozo, you've been muted for `{{length}}`!\n", language, {length: length}))
+				.setDescription(__("Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`", language, {length: length, reason: reason ?? "none given"}))
 				.setFooter({
 					text: `Muted by ${interaction.user.tag}`
 				})

@@ -3,7 +3,6 @@
 	"💢{{name}} has been muted for **{{length}}**": "💢{{name}} has been muted for **{{length}}**",
 	"Successfully set language to `{{newLanguage}}`!": "Successfully set language to `{{newLanguage}}`!",
 	"You do not have permission to perform this action": "You do not have permission to perform this action",
-	"Unmuted {{username}}": "Unmuted {{username}}",
 	"✅ {{username}} has been unmuted": "✅ {{username}} has been unmuted",
 	"🚨 Missile command system 🚨": "🚨 Missile command system 🚨",
 	"Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?": "Situation is critical! Commander, we are waiting for your orders!\n\nAre you sure you want to nuke the channel?",
@@ -20,8 +19,6 @@
 	"You may have deleted the message, but you will never be able to stop me": "You may have deleted the message, but you will never be able to stop me",
 	"Current language is set to `{{currentLang}}`": "Current language is set to `{{currentLang}}`",
 	"Get trolled bozo, you've been muted for `{{length}}`!": "Get trolled bozo, you've been muted for `{{length}}`!",
-	"Welcome back <!@{{userId}}>, you've been unmuted!": "Welcome back <!@{{userId}}>, you've been unmuted!",
-	"Welcome back <@!{{userId}}>, you've been unmuted!": "Welcome back <@!{{userId}}>, you've been unmuted!",
 	"I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻": "I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻",
 	"Bruh dawg I can't unmute this person, are they admin or something?": "Bruh dawg I can't unmute this person, are they admin or something?",
 	"Set status to `{{status}}`": "Set status to `{{status}}`"

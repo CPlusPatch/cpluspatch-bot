@@ -67,7 +67,7 @@ I made this bot because I wanted to have a fun little project to work on, so yea
 <!-- GETTING STARTED -->
 ## Getting Started
 
-How to get a local copy up and running follow these simple example steps.
+Getting a working copy is fairly simple
 
 ### Prerequisites
 
@@ -98,7 +98,7 @@ You'll need npm of course, and if you want to use the /song command a Spotify to
 
 4. Fill in `config.json`
 
-5. Create a `data` folder and create `lang.json` and `toggle_triggers.json` inside
+5. Create a `data` folder and create `lang.json`, `roles.json` and `toggle_triggers.json` inside
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

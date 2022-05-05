@@ -22,40 +22,30 @@
 // This prevents the bot from completely shutting down when an error is encountered while running. Instead, it just ignores it and logs to shell
 // Error handler
 process
-	.on('unhandledRejection', (reason, p) => {
-		console.error(reason, 'Unhandled Rejection at Promise ', p);
-	})
-	.on('uncaughtException', err => {
-		console.error(err, 'Uncaught Exception caught');
-	})
-	.on("SIGINT", () => {
-		console.log("[-] Exiting bot");
-		client.destroy();
-		process.exit(1);
-	});
+.on('unhandledRejection', (reason, p) => console.error(reason, 'Unhandled Rejection at Promise ', p))
+.on('uncaughtException', err => console.error(err, 'Uncaught Exception caught ', err))
+.on("SIGINT", () => {
+	console.log("[-] Exiting bot");
+	client.destroy();
+	process.exit(1);
+});
 
 // Base libraries
-const { Client, Intents, MessageEmbed } = require("discord.js");
-const Database = require("simplest.db");
+const { Client, Intents } = require("discord.js");
+const Database = require("simplest.db").JS0N;
 const { token, guildId, activityResetTimeout } = require("./config.json");
 const { I18n } = require('i18n');
 
-const i18n = new I18n({
-  locales: ['en', 'fr'],
-  directory: './locales'
-});
-const __ = (string, lang, options = undefined) => i18n.__({phrase:string, locale:lang}, options);
+const __ = (string, lang, options = undefined) => new I18n({
+	locales: ['en', 'fr'],
+	directory: './locales',
+	syncFiles: true,
+  }).__({phrase:string, locale:lang}, options);
 
 // Spawn new databases
-const lang_db = new Database({
-    path: './data/lang.json'
-});
-const mute_db = new Database({
-    path: './data/toggle_responses.json'
-});
-const role_db = new Database({
-    path: './data/roles.json'
-});
+const lang_db = new Database({ path: './data/lang.json' });
+const mute_db = new Database({ path: './data/toggle_responses.json' });
+const role_db = new Database({ path: './data/roles.json' });
 
 // Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
@@ -80,17 +70,12 @@ client.once("ready", () => {
 	}, activityResetTimeout * 100);
 	console.log("[+] Set activity to \"watching all of you naughty people\"");
 
-	// Registers commands
-	var commands = [
-		require("./commands/settings").command,
-		require("./commands/ping").command,
-		require("./commands/mute").command,
-		require("./commands/meme").command,
-		require("./commands/unmute").command,
-		require("./commands/random_song").command,
-		require("./commands/roles").command,
-		require("./commands/echo").command,
-	];
+	let commands = [];
+	var normalizedPath = require("path").join(__dirname, "commands");
+
+	require("fs").readdirSync(normalizedPath).forEach(function(file) {
+		commands.push(require("./commands/" + file).command);
+	});
 
 	// Get dev guild ID for slash commands, comment to use global slash commands
 	const guild = client.guilds.cache.get(guildId);
@@ -115,11 +100,12 @@ client.on('messageCreate', async (message) => {
 
 	// Don't react to bots or DMs
 	if (message.author.bot || message.channel.type === 'DM') return;
-	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) require("./commands/responses").default(message, language);
-	// Check if bot is mentioned
+	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) require("./scripts/responses").default(message, language);
+	
+	// Check if bot is asked to nuke a channek
 	if (message.mentions.has(client.user)) {
 		if (["nuke", "bomb", "strike", "hell", "rain"].some(v => msg.includes(v))) {
-			require("./commands/nuke").default(message, language);
+			require("./scripts/nuke").default(message, language);
 		}
 	}
  });
@@ -129,31 +115,13 @@ client.on("interactionCreate", async (interaction) => {
 
 	if (interaction.isCommand()) {
 		const { commandName, options } = interaction;
-
-		switch (commandName) {
-			case "ping":
-				return require("./commands/ping").default(interaction, language);
-			case "mute":
-				return require("./commands/mute").default(interaction, language);
-			case "unmute":
-				return require("./commands/unmute").default(interaction, language);
-			case "settings":
-				return require("./commands/settings").default(interaction, language);
-			case "meme":
-				return require("./commands/meme").default(interaction, language);
-			case "song":
-				return require("./commands/random_song").default(interaction, language);
-			case "roles":
-				return require("./commands/roles").default(interaction, language);
-			case "fard":
-				return require("./commands/echo").default(interaction, language);
-		}
+		return require("./commands/" + commandName).default(interaction, options);
 	}
 
 	else if (interaction.isButton()) {
 		switch (interaction.customId) {
 			case "nuke_launch_confirm_button": {
-				return require("./commands/nuke").beginNuke(interaction, language);
+				return require("./scripts/nuke").beginNuke(interaction, language);
 			}
 
 			case "clear-pings": {
@@ -179,54 +147,64 @@ module.exports = {
 client.login(token);
 
 /*
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWMMMMMWXKK00KKNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWWMMMWNNWWXNKxxxkkkkxdddxO0000KXNWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWXkdOXWXxc;:cccccccclccclc:::lodxxOKNWMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWkc;,,:lc:,..........,cc:ccccccllollloxk0XWMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNx,,,'.................,cccccclllllllodxxxkkOXWMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMO,,:'.................''':llllllllllllloodO0OkOXWMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0::l:'...............'::.':lllllllllloolllldO00k0NMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWO:,;'.....................'clllllllllooollllox0KO0WMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMXd:;coc::,',;c:;;:cc:;',,'...,cllllllllllllllllldO0k0WMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNo,,lKNXXNXK0KXNNNNNNNKOxdc;,,',cllllllllllllllllloOOONMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMNd'.,kNNNNNNNNNNNNNNNNNNNNXKxc;,';lclllllllllllllolloxk0WMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMWk'..;ONNNNNNNNNNNNNNNNNNNNNNKOdl,':cllllllllllllllolloxkKMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMK:..'xKKKXNNNNNNNNNNNNNNNNNNNXK0xc,,ccllllllllllllllllldxkNMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMk'..;do:;ckNNNNNNNNNNNNNNNNNNNXXKko;;ccllllllllllllllllokx0MMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMNl...c0K0k:,dXNNNNNNNNNNNNNNNNNNXXK0o;:cllllllllllllllllokxkNMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMO;...lKKKK0xldXNNNNNNNNNNNNNNNNNXXXXOc;ccllllllllllllllllxkd0MMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMNo....lOxoodxxoONNNXKKKXXNNNNNNNNNXXXKd;::cllllllllllllllloOdkWMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMM0;....',;cllcloxXNNXKOdl:::ccccccldOKXOc;:cllllllllllllllllkxxXMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMk'.....lxkOkkxdd0NNNXKOo;;,,,;ldxOKXXXKd;:ccllllllllllllllldkd0MMMMMMMMMMM
-MMMMMWWNNXXK0KNMMMMMMMMMMWo.....,OOxKOkK0x0NNNXKxoodoclc;;lOKXXXKk:;::cllllllllllllllokdOMMMMMMMMMMM
-MMNxc:::::;;,;OMMMMMMMMMMXc.....'xXxk0xkOx0NNNNW0xk0KkONXx:'ckXXX0l,::clllllllllllllllxxOWMMMMMMMMMM
-lkXd''..::.,;:kWMMMMMMMMM0:.....'dX0xxdooOKNNNNWXkox0OkKWMNx,'cx0Kx;;::clllllllllllcccdkOWMMMMMMMMMM
-'.,oxkl.,;'xKXWMMMMMMMMMMO,.....:kkOKKKOkKXNNNNNNKOxxOx0MWMWXkk0KK0c';::clllllccccc:ccoxkNMMMMMMMMMM
-',..kMk.,,;KMMMMMMMMMMMMM0;.....dK00OKNNXNNNNNNNNNNX0OOXMMMWKk0KKK0Ol;:::cllcc::;;;::clloKMMMMMMMMMM
-;.;.cNx.,,;KMMMMMMMMMMMMMXc.....cXNNNXXNNNNNNNNNNNNNNWWWWNX0OOKKKK0kkl;:::cllcc:::::looolOMMMMMMMMMM
-'.,.oWx.,,;KMMMMMMMMMMMMMWk,.....cKNNNNNNK0KXNNNNNNNNNNNNXKKXXXXKOdxx:';c::cccccoxkkkOOOdOMMMMMMMMMM
-''.cXMx.,,;KMMMMMMMMMMMMMMXo,,'...:xKNNNKxoddx0NNNNNNNNNNNNNXNXOxolc,..':;;;::;:ccoooodockMMMMMMMMMM
-,:xNMMO;lloXMMMMMMMMMMMMMMMNx:;;,,'';lx0NNK0OO0XNNNNNNNNNNNKOxxol:'.....,;;;;;;;;;;::cdclKMMMMMMMMMM
-KWMMMMWWWWWMMMMMMMMMMMMMMMMMW0o;;:c:;,',coxk0KKXXXXXXKK0Oxxddxdc,.....,'';;;;;;;;;;;:olc0MMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMWMWWWKxl;;;;;,''',;:ccclloxkkkkkO0kl:,'...',,.';;;;;;;;,,,codKMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMWN0xdl:,..........'',;;:codxkO0Oo;,'''',,,'..,;,,,'.,cdxOKNWWMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMNOo;'......................'''',:;,;;''''''..'........':kNMMMMWMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMXd,...............................'cdc;'''''''.......'''..,xXMMMMMMMMMMMMMMW
-MMMMMMMMMMMMMMMMMMMMMMMMXl''.......'.'.....'...'...........cx:::..''.'''''...''.....:kNWWMMMMMMMMWWW
-MMMMMMMMMMMMMMMMMMMMMMMMXc''.....''..........'....'.........;;,;,'.'...'''''..;lxl...'cxKWMMMMMMMWXX
-MMMMMMMMMMMMMMMMMMMMMMMMK:',,,..'''''..........'.............'cddc'...''.''..':x0k,...',cx0WMMMMMMWK
-MMMMMMMMMMMMMMMMMMMMMMMMO:,,,,..'''.................'.''...'..'lOOd,.'''.......'cd;....',:cdKWMMMMMW
-MMMMMMMMMMMMMMMMMMMMMMMM0:,,,'..''............. ....,clll:;,....:c:;.''''....'.'okc... ..';::kWMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMNl',,'..'''......... ....''.;OXOolc,.......''..''..'....':,... ...';;:OMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMWXc.','..'''....... ..........;O0dl:'....................':;... .....,,lKWMMM
-MMMMMMMMMMMMMMMMMMMMMMM0:...,'..'''....  .............cKKxo,................................',loOWMM
-MMMMMMMMMMMMMMMMMMMMMMWo',,'.'..'''... ...............'dKx:'...............................'';olkWMM
-MMMMMMMMMMMMMMMMMMMMMMXc','..,'...... ...............'.;xxc................................',;cdXMMM
-MMMMMMMMMMMMMMMMMMMMMMKc';..',,,...'.................''.''........................'..''..:dloxONMMMM
-MMMMMMMMMMMMMMMMMMMMMMNl',..,,,''....................'......................'.....'..,;,.oWWWMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMWo',..,,'.............................''..............''..'....,::.cNMMMMMMMMM
+,,;;;;;;;:::::::::::ccccccccccccccllllllllllllllllllllllllllllllllllllllllllllllllllllllllcccccccccccccccc::::::::::;;;;
+;;;;;;::::::::::ccccccccccccclllllllllllllllllllllllllllllllllloloolllllllllllllllllllllllllllllcccccccccccccc::::::::;;
+;;;;:::::::::cccccccccccllllllllllllllllllllllllloolcccclooxxxxxdoooooooooooloollllllllllllllllllllllccccccccccc::::::::
+;;::::::::cccccccccccllllllllllllllllllloooooooool:;,''',,;:coxxoc::clooooooooooooooolllllllllllllllllllccccccccccc:::::
+;:::::::ccccccccclllllllllllllllllooooooooooooooc,.'..':cllc::ll:;;,',looooooooooooooooooooollllllllllllllllccccccccc:::
+::::::cccccccclllllllllllllloooooooooooooooooooc,..,',llldkxdoododxx:'coooooooooooooooooooooooooolllllllllllllccccccccc:
+::::ccccccccllllllllllllloooooooooooooooooooooc'..';:cc'.:dxxxxx:.:kxlldoooooooooooooooooooooooooooolllllllllllllccccccc
+::cccccccclllllllllllloooooooooooooooooooooooo;. .;:ccllldkkOkdxxlodxxddddddddddddooooooooooooooooooooollllllllllllccccc
+:ccccccclllllllllllooooooooooooooooooodddoddoo:..,cldxkO0KK0kxlloOKKK0xdddddddddddddddddooooooooooooooooooollllllllllccc
+ccccccllllllllllooooooooooooooooooodddddddddddo;':cllodxkkOkkocldOKKK0kdddddddddddddddddddddoooooooooooooooooolllllllllc
+ccccllllllllllooooooooooooooooddddddddddddddddo;,cccclooooooooodkO0OOOOxdddddddddddddddddddddddddoooooooooooooolllllllll
+ccclllllllllooooooooooooooodddddddddddddddddddo;;ccllodkkkxxdxxkkkOOOOOxddddddddddddddddddddddddddddoooooooooooooollllll
+clllllllllooooooooooooodddddddddddddddddddddddo;;cllloxO0KK0KKKXXXXNNX0kxxddddddddddddddddddddddddddddooooooooooooolllll
+llllllllloooooooooooodddddddddddddddddddddddddd;,cllllodkO000KKXXXNNNNKkxxxxxxxxxxxdddddddddddddddddddddooooooooooooolll
+llllllloooooooooooodddddddddddddddddddddddddddd;':lllllloodxxxkOO00KKK0kxxxxxxxxxxxxxxxdddddddddddddddddddooooooooooooll
+lllllloooooooooooddddddddddddddddddddddddxxdddd;.'clooooooooooooddddxxkxxxxxxxxxxxxxxxxxxdddddddddddddddddddoooooooooooo
+llllloooooooooooddddddddddddddddddddxxxxxxxddol,...;cooooddddddddooooodxxxxxxxxxxxxxxxxxxxxxxdddddddddddddddddoooooooooo
+llllooooooooooddddddddddddddddddxdxxxdxxxxdl;,;.. ..',:cooddddddoooolldxxxxxxxxxxxxxxxxxxxxxxxxddddddddddddddddooooooooo
+llloooooooooodddddddddddddddddddxxxxxxxxdl;'....  .......',;;::::::;;ldxkkkxxxxxxxxxxxxxxxxxxxxxxxdddddddddddddddooooooo
+llooooooooooddddddddddddddddxxxxxxxxxdoc;'......  ......     ......'cddxOOOOOkkkxxxxxxxxxxxxxxxxxxxdddddddddddddddoooooo
+loooooooooodddddddddddddddxdxxxxxddlc;,'...''.    ..'....       ...';lxkkOO0OOOOOOkkkxxxxxxxxxxxxxxxddddddddddddddoooooo
+loooooooooddddddddddddddxxdddooolc;,......'',.   .........     .......cxkkkkkkkOOOOOOOOkkkxxxxxxxxxxxddddddddddddddooooo
+ooooooooodddddddddddddddol::;;;;,,,'......'','. ..............',;;:c:';dxxkkkkkxxkkkkkkOOOOkkxxxxxxxxdddddddddddddddoooo
+oooooooodddddddddddddddo:''''''''''''.......''...',.''...,,:ccldo:cl;,odddxxxxdddoooooddddddooddxxxxxxxdddddddddddddoooo
+ooooooodddddddddddddddxl,....''....''........'..';c;::;cllll::ldclxl:ldddoddooolccccllllclc:;:cdxxxxxxxxddddddddddddoooo
+oooooooddddddddddddddddl'....................'...,c;;ldxoddc:dOddkocldddoolllcc:cccccccccc:,,;:dxxxxxxxxxddddddddddddooo
+ooooooddddddddddddddxdxl,.....................',.,c,,lddk0doxOdcdo:ldddddolc:::ccllccc:::;,,,,:dxxxxxxxxxxdddddddddddooo
+oooooodddddddddddddxxdxo;.'...................',,::',do;oxokKklod:coddolllcc:;;:clllcc:;;'',,,:oxxxxxxxxxxddddddddddddoo
+oooooddddddddddddddxxxxd:''....................',:;.;o:,c:;xOdoxl:loool;:lloolllolcccc:;'',,,,;oxxxxxxxxxxddddddddddddoo
+oooooddddddddddddddxxxxd:'''.....''..''.........,:,.:c,:c';lclxd:clllc:;;;:ccll:ccccc:,'.',,,,;lxxxxxxxxxxdddddddddddddo
+oooooddddddddddddxxxxxxo;'''......''''''........','.:l:lc,::':dlcclcccc:::::ccccc::::,..',,,;,,cxxxxxxxxxxdddddddddddddo
+oooooddddddddddddxdxxxxl'''...   .',,,,'''.......,'.:oloc,c,.,::ccccccc:ccccccccccc:'...',,,;;,:dxxxxxxxxxdddddddddddddo
+oooooddddddddddddxxxxxdc''''..    .,,,,,,''......''.:c;l:,;'..,;;;;cccccccccccccc::'. ..',,,;;,:dxxxxxxxxddddddddddddddo
+oooooddddddddddddxxxxxxl'.'''.    ..''',,,,'......',:c,l:,;'.,;,',,:ccccccccc::::;,.  ..',,,,;,:dxxxxxdddddddddddddddddo
+ooooodddddddddddddxxxxxo,...''.    ...',,,,,'......,cc;lc,,,,,,'',,;;::cc::::::::;.   ..',,,,;;cdxxxxxdddddddddddddddddo
+ooooodddddddddddddddddxd:........    ..',,,,,''.....;;,:;.','''''',,,;;;;;;;;;;;;;'.  ..',,,,,;lxxxddddddddddddddddddddo
+oooooddddddddddddddddxxxc'........    ..'',,,,''....',,c:''...''',,,,,,,,,,,,,,,,,'.  ..'''',,:oxdxdddddddddddddddddddoo
+ooooodddddddddddddddddxdc'........    ...'',,'''''...':c;'...'',,,,,,,,,,,''''''..    ..'....':oxdddddddddddddddddddddoo
+oooooodddddddddddddddddo;..........    ...'',,'''''........',,,,,,,,,,,,,,,'',,..     ..''....'cdddddddddddddddddddddooo
+oooooddddddddddddddddddl..             ....''''''..'......',,,,,',,,,,,,,,'''''..     ...',,,'';ldddddddddddddddddddoooo
+oooooodddddddddddddddddo;...          .,.....'''..........'..''''',,,,,,,,'''''...         ..,;coddddddddddddddddddooooo
+oooooooddddddddddddddddd:.....        ;,...............''',,;,'..'',,,,;,;;;;,..         ...',;cddddddddddddddddddoooooo
+ooooooodddddddddddddddddc...          .. ..............,c:;;:::;...''''''''''''...   .......,;:oddddddddddddddddddoooooo
+ooooooodddddddddddddddddo;....          ...........''..,cl:,,,;::;,''...........      ...';;;;:odddddddddddddooooooooooo
+oooooooddddddddddddddddddc'....         ....'.....'',,..cllc:;,,:cllllcclllc;;;,.  .......';;codddddddddddddoooooooooooo
+oooooooodddddddddddddddddl,....         .........'',,'..;ccllc;,;;::::::::::::;'.......';;,,,cdddddddddddooooooooooooooo
+loooooooodddddddddddddddddl,....        .........'',,'..':lllcc;;;::::::::::::;. .;:;,'.';;:lddddddddddddooooooooooooooo
+loooooooooddddddddddddddddc,....          ........',;;'..,llcc:;,,,;:;;;,,;;;;'. .':c:,'.,coddddddddddddoooooooooooooooo
+llooooooooodddddddddddddddo:'.....           .....',;,....;looc:,...''''',;:;'......,,''',cddddddddddddooooooooooooooool
+lloooooooooodddddddddddddddl;.....   ..       ....',,.   ..;clddoc:::cccllc'...:l;..''',',lddddddddddoooooooooooooooooll
+llloooooooooodddddddddddddddl;'...  ..'''..    ...''.  ......':oxxxxdddoc,....,cll:,',,,:ldddddddddoooooooooooooooooolll
+lllllooooooooooddddddddddddddc;,'...',;;:c:,'..'''.............':loddol;.....'::;,;:,';;codddddddooooooooooooooooooollll
+lllllloooooooooodddddddddddddo;','....''',;;;,,'.................',:cc:,';,.,::;,..,;,,coddddddoooooooooooooooooolllllll
+llllllloooooooooooddddddddddddlc;''.......''........................';cloc;;::;;,'..'',cddddooooooooooooooooolllllllllll
+lllllllllooooooooooooodddddddddddl;'..................................',;;,,,,,,,'....,ldoooooooooooooooooolllllllllllll
+cclllllllloooooooooooooooodddddddo:'...........................................''.';ccloooooooooooooooooolllllllllllllll
+cclllllllllooooooooooooooooooddddl,...............................................'cddoooooooooooooooollllllllllllllllcc
+cccclllllllllloooooooooooooooooodc'..................    ........................';loooooooooooooooolllllllllllllllccccc
+ccccccllllllllllooooooooooooooooo:...................   .........................';loooooooooooooolllllllllllllllccccccc
+ccccccclllllllllllooooooooooooooo;..................   .;;.......................':oooooooooooolllllllllllllllllcccccccc
 */
