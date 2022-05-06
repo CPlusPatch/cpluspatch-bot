@@ -125,12 +125,12 @@ client.on("interactionCreate", async (interaction) => {
 			}
 
 			case "clear-pings": {
-				await require("./commands/roles").clearPingRoles(interaction, language);
+				return require("./commands/roles").clearPingRoles(interaction, language);
 			}
 		}
 	}
 	else if (interaction.isSelectMenu()) {
-		await require("./commands/roles").checkForRoleEvent(interaction, language);
+		return require("./commands/roles").checkForRoleEvent(interaction, language);
 	}
 });
 
