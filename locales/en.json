@@ -21,5 +21,9 @@
 	"Get trolled bozo, you've been muted for `{{length}}`!": "Get trolled bozo, you've been muted for `{{length}}`!",
 	"I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻": "I can't seem to mute this person, maybe I'm don't have the perms for that 🤷🏻",
 	"Bruh dawg I can't unmute this person, are they admin or something?": "Bruh dawg I can't unmute this person, are they admin or something?",
-	"Set status to `{{status}}`": "Set status to `{{status}}`"
+	"Set status to `{{status}}`": "Set status to `{{status}}`",
+	"Hello": "Hello",
+	"Spamming the word \"monke\" in chat {{times}} times": "Spamming the word \"monke\" in chat {{times}} times",
+	"i refuse to send more than fifteen (15) monke": "i refuse to send more than fifteen (15) monke",
+	"Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`": "Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`"
 }

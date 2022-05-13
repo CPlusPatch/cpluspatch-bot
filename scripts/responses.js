@@ -15,7 +15,7 @@ module.exports.default = async (message, language) => {
 
 			if (Array.isArray(triggers[trigger])) reply = triggers[trigger][Math.floor(Math.random() * triggers[trigger].length)];
 
-			// Split selected reply into chunks of 2000 characters
+			// Split selected reply into chunks of 1800 characters
 			const chunks = require('chunk-text')(reply, 1800);
 			for (let chunk in chunks) {
 				// Send each chunk
@@ -34,4 +34,8 @@ module.exports.default = async (message, language) => {
 			message.channel.send(chunks[chunk]);
 		}
 	}
+	// Auto spam "monke" in chat when the word "monke" is mentioned
+
+
+
 };

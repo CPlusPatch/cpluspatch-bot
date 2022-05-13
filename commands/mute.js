@@ -43,7 +43,6 @@ module.exports = {
 
 		try {
 			await memberToMute.timeout(timeInMs, reason);
-			
 			embed
 				.setAuthor({
 					name: memberToMute.user.tag,

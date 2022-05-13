@@ -21,6 +21,7 @@
 
 // This prevents the bot from completely shutting down when an error is encountered while running. Instead, it just ignores it and logs to shell
 // Error handler
+
 process
 .on('unhandledRejection', (reason, p) => console.error(reason, 'Unhandled Rejection at Promise ', p))
 .on('uncaughtException', err => console.error(err, 'Uncaught Exception caught ', err))
@@ -40,7 +41,8 @@ const __ = (string, lang, options = undefined) => new I18n({
 	locales: ['en', 'fr'],
 	directory: './locales',
 	syncFiles: true,
-  }).__({phrase:string, locale:lang}, options);
+	retryInDefaultLocale: false,
+}).__({phrase:string, locale:lang}, options);
 
 // Spawn new databases
 const lang_db = new Database({ path: './data/lang.json' });
@@ -115,7 +117,7 @@ client.on("interactionCreate", async (interaction) => {
 
 	if (interaction.isCommand()) {
 		const { commandName, options } = interaction;
-		return require("./commands/" + commandName).default(interaction, options);
+		return require("./commands/" + commandName).default(interaction, language);
 	}
 
 	else if (interaction.isButton()) {
