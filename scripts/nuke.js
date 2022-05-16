@@ -30,6 +30,7 @@ module.exports.default = async (message, language) => {
 	message.reply({embeds: [confirmEmbed], components: [confirmEmbedRow]});
 };
 
+// It's Morbin' time
 module.exports.beginNuke = async (interaction, language) => {
 	if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) return interaction.reply({embeds: [new MessageEmbed().setColor("0xe11e2b").setTitle(__(`You do not have permission to launch the nukes`, language))], ephemeral: true});
 		
