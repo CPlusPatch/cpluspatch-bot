@@ -59,7 +59,7 @@ module.exports = {
 		catch (e) {
 			embed
 				.setColor("#df9c20")
-				.setDescription(__("Bruh dawg I can't unmute this person, are they admin or something?", language));
+				.setDescription(__("Bruh, can't mute this person, move up my role or something", language));
 		}
 		return interaction.reply({ embeds: [embed] });
 	}

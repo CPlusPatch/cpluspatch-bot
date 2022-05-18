@@ -16,5 +16,7 @@
 	"Hello": "Hello",
 	"Spamming the word \"monke\" in chat {{times}} times": "Spamming the word \"monke\" in chat {{times}} times",
 	"i refuse to send more than fifteen (15) monke": "i refuse to send more than fifteen (15) monke",
-	"Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`": "Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`"
+	"Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`": "Get trolled bozo, you've been muted for `{{length}}`!\nReason: `{{reason}}`",
+	"Bruh, can't ban this person, move up my role or something": "Bruh, can't ban this person, move up my role or something",
+	"Get trolled bozo, you've been banned!\nReason: `{{reason}}`": "Get trolled bozo, you've been banned!\nReason: `{{reason}}`"
 }
