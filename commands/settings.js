@@ -120,7 +120,7 @@ module.exports = {
 	},
 
 	default: (interaction, lang) => {
-		const { lang_db, translate: __ } = require('../index');
+		const { db, translate: __ } = require('../index');
 
 		switch(interaction.options.getSubcommandGroup()) {
 			case "language": {
@@ -128,7 +128,7 @@ module.exports = {
 					case "set": {
 						if(interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
 							var newLanguage = interaction.options.getString("lang");
-							lang_db.set(`lang_${interaction.guildId}`, newLanguage);
+							db.setServerField(interaction.guild.id, "language", newLanguage);
 							const embed = new MessageEmbed()
 								.setTitle("Language")
 								.setColor(0x00AE86)
@@ -154,14 +154,14 @@ module.exports = {
 				break;
 			}
 			case "responses": {
-				const { mute_db, emojis } = require("../index.js");
+				const { db, emojis } = require("../index.js");
 				
 				switch(interaction.options.getSubcommand()) {
 					case "toggle": {
 						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						const enabled = interaction.options.getBoolean("enabled");
 
-						mute_db.set(`mute_${interaction.guild.id}`, !enabled);
+						db.setServerField(interaction.guild.id, "muted", !enabled);
 						const embed = new MessageEmbed()
 							.setTitle("Responses")
 							.setColor(enabled ? "#00AE86" : "#6d05fa")
@@ -172,9 +172,9 @@ module.exports = {
 						const time = ms(interaction.options.getString("time") ?? "1s");
 						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) && time > 1000 * 60 * 60) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						if (!time) return interaction.reply({content:__("Please specify a valid time", language), ephemeral: true});
-						mute_db.set(`mute_${interaction.guild.id}`, true);
+						db.setServerField(interaction.guild.id, "muted", true);
 						setTimeout(() => {
-							mute_db.set(`mute_${interaction.guild.id}`, false);
+							db.setServerField(interaction.guild.id, "muted", false);
 						}, time);
 						const embed = new MessageEmbed()
 							.setTitle("Responses")
@@ -200,15 +200,5 @@ module.exports = {
 				}
 			}
 		}
-	},
-
-	getLanguageForGuild: (guildId) => {
-		const { lang_db } = require('../index');
-		return lang_db.get(`lang_${guildId}`) ?? "en";
-	},
-
-	getGuildMuteStatus : (guildId) => {
-		const { mute_db } = require('../index');
-		return mute_db.get(`mute_${guildId}`) ?? false;
 	}
 };

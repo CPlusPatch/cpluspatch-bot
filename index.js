@@ -36,6 +36,9 @@ const { Client, Intents } = require("discord.js");
 const Database = require("simplest.db").JS0N;
 const { token, guildId, activityResetTimeout } = require("./config.json");
 const { I18n } = require('i18n');
+const db = require("./scripts/firebase.js");
+
+const role_db = new Database({ path: "./data/roles.json" });
 
 const __ = (string, lang, options = undefined) => new I18n({
 	locales: ['en', 'fr'],
@@ -44,10 +47,6 @@ const __ = (string, lang, options = undefined) => new I18n({
 	retryInDefaultLocale: false,
 }).__({phrase:string, locale:lang}, options);
 
-// Spawn new databases
-const lang_db = new Database({ path: './data/lang.json' });
-const mute_db = new Database({ path: './data/toggle_responses.json' });
-const role_db = new Database({ path: './data/roles.json' });
 
 // Spawn Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
@@ -97,12 +96,12 @@ client.once("ready", () => {
 });
 
 client.on('messageCreate', async (message) => {
-	const language = require("./commands/settings").getLanguageForGuild(message.guildId);
+	const language = (await db.getServerData(message.guild.id)).language;
 	const msg = message.content;
 
 	// Don't react to bots or DMs
 	if (message.author.bot || message.channel.type === 'DM') return;
-	if (!require("./commands/settings").getGuildMuteStatus(message.guildId)) require("./scripts/responses").default(message, language);
+	if (!(await db.getServerData(message.guild.id)).muted) require("./scripts/responses").default(message, language);
 	
 	// Check if bot is asked to nuke a channek
 	if (message.mentions.has(client.user)) {
@@ -113,7 +112,7 @@ client.on('messageCreate', async (message) => {
  });
 
 client.on("interactionCreate", async (interaction) => {
-	const language = require("./commands/settings").getLanguageForGuild(interaction.guildId);
+	const language = (await db.getServerData(interaction.guildId)).language;
 
 	if (interaction.isCommand()) {
 		const { commandName, options } = interaction;
@@ -138,8 +137,7 @@ client.on("interactionCreate", async (interaction) => {
 
 module.exports = {
 	client: client,
-	lang_db: lang_db,
-	mute_db: mute_db,
+	db: db,
 	role_db: role_db,
 	translate: __,
 	emojis: {}

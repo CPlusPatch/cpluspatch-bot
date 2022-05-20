@@ -1,8 +1,11 @@
 {
-	"clientId": "",
-	"token": "",
-	"guildId": "",
+	"clientId": "BOT_CLIENT_ID",
+	"token": "BOT_TOKEN",
+	"guildId": "DEV_GUILD_ID",
 	"activityResetTimeout": 30,
-	"spotifyClientId": "",
-	"spotifyClientSecret": ""
+	"spotifyClientId": "CLIENT_ID_HERE",
+	"spotifyClientSecret": "CLIENT_SECRET_HERE",
+	"firebase": {
+		"SERVICE_ACCOUNT_KEY_HERE": "RIGHT_HERE"
+	}
 }
