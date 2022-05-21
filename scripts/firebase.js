@@ -5,6 +5,7 @@ const Database = require("simplest.db").JS0N;
 const config = require('../config.json');
 
 const cache = new Database({ path: './data/cache.json' });
+cache.clear();
 const app = initializeApp({
 	credential: cert(config.firebase)
 });
@@ -39,7 +40,7 @@ module.exports = {
 	setServerData: async (serverId, data) => {
 		// Remove the server from the cache
 		cache.delete(serverId);
-
+		
 		const ref = db.collection('servers').doc(serverId);
 		await ref.set(data);
 	},
@@ -48,6 +49,13 @@ module.exports = {
 		cache.delete(serverId);
 
 		const ref = db.collection('servers').doc(serverId);
-		await ref.update({ [field]: value });
+		const doc = await ref.get();
+		if (!doc.exists) {
+			let newData = defaultData;
+			newData[field] = value;
+			await ref.set(newData);
+		} else {
+			await ref.update({ [field]: value });
+		}
 	}
 };
