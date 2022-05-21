@@ -161,7 +161,7 @@ module.exports = {
 						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						const enabled = interaction.options.getBoolean("enabled");
 
-						db.setServerField(interaction.guild.id, "muted", !enabled);
+						db.setServerField(interaction.guild.id, "auto_responses", enabled);
 						const embed = new MessageEmbed()
 							.setTitle("Responses")
 							.setColor(enabled ? "#00AE86" : "#6d05fa")
@@ -172,9 +172,9 @@ module.exports = {
 						const time = ms(interaction.options.getString("time") ?? "1s");
 						if(!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) && time > 1000 * 60 * 60) return interaction.reply({ content: __("You need Manage Server permissions to do this, stupid", lang), ephemeral: true });
 						if (!time) return interaction.reply({content:__("Please specify a valid time", language), ephemeral: true});
-						db.setServerField(interaction.guild.id, "muted", true);
+						db.setServerField(interaction.guild.id, "auto_responses", false);
 						setTimeout(() => {
-							db.setServerField(interaction.guild.id, "muted", false);
+							db.setServerField(interaction.guild.id, "auto_responses", true);
 						}, time);
 						const embed = new MessageEmbed()
 							.setTitle("Responses")

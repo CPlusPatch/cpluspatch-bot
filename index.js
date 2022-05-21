@@ -49,7 +49,7 @@ const __ = (string, lang, options = undefined) => new I18n({
 
 
 // Spawn Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS], partials: ["CHANNEL"] });
 
 client.once("ready", () => {
 	console.log(String.raw`
@@ -101,7 +101,7 @@ client.on('messageCreate', async (message) => {
 
 	// Don't react to bots or DMs
 	if (message.author.bot || message.channel.type === 'DM') return;
-	if (!(await db.getServerData(message.guild.id)).muted) require("./scripts/responses").default(message, language);
+	if ((await db.getServerData(message.guild.id)).auto_responses) require("./scripts/responses").default(message, language);
 	
 	// Check if bot is asked to nuke a channek
 	if (message.mentions.has(client.user)) {

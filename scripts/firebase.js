@@ -11,7 +11,7 @@ const app = initializeApp({
 const db = getFirestore(app);
 const defaultData = {
 	language: "en",
-	muted: false,
+	auto_responses: false,
 };
 
 module.exports = {
